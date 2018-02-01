@@ -6,7 +6,7 @@ LIBS = -lGL -lX11 -lassimp
 
 all: GameEngine
 
-GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o TestRenderer.o BitMapHeader.o BmpLoader.o DibHeader.o
+GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o BitMapHeader.o BmpLoader.o DibHeader.o
 	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o TestRenderer.o BitMapHeader.o BmpLoader.o DibHeader.o -o GameEngine $(LIBS)
 
 GameEngine.o: GameEngine.cpp
@@ -24,8 +24,8 @@ Mesh.o: Mesh.cpp
 RenderTarget.o: RenderTarget.cpp
 	$(CC) $(CFLAGS) RenderTarget.cpp
 	
-TestRenderer.o: TestRenderer.cpp
-	$(CC) $(CFLAGS) TestRenderer.cpp
+BumpMapRenderer.o: BumpMapGLRenderer.cpp
+	$(CC) $(CFLAGS) BumpMapGLRenderer.cpp
 	
 BmpLoader.o: BmpLoader.cpp
 	$(CC) $(CFLAGS) BmpLoader.cpp

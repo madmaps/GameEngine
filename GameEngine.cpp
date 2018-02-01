@@ -22,7 +22,7 @@
 
 #include "BmpLoader.h"
 #include "StandardObject.h"
-#include "TestRenderer.h"
+#include "BumpMapGLRenderer.h"
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
@@ -308,7 +308,8 @@ int main(int argc, char **argv)
 		modelRotation = glm::toMat4(modelRot);
 		modelMatrix = modelTranslate * modelRotation;
 		
-		
+		test2.updateViewMatrix((const float*)glm::value_ptr(view_mat));
+		test2.updateCameraLocation((const float*)glm::value_ptr(camPos));
 		
 		test.updateViewMatrix((const float*)glm::value_ptr(view_mat));
 		test.updateModelMatrix((const float*)glm::value_ptr(modelMatrix));
@@ -318,9 +319,6 @@ int main(int argc, char **argv)
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		test.draw();
-		test2.updateViewMatrix((const float*)glm::value_ptr(view_mat));
-		test2.updateModelMatrix((const float*)glm::value_ptr(modelMatrix1));
-		test2.updateCameraLocation((const float*)glm::value_ptr(camPos));
 		test2.draw();
 
 

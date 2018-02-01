@@ -39,6 +39,10 @@ class TestRenderer : public RenderTarget
 		GLuint vao;
 		GLuint shader;
 		GLuint* uniformLocations;
+		float* projectionMatrix;
+		float* viewMatrix;
+		float* modelMatrix;
+		float* cameraLocation;
 		unsigned int numberOfVertices;
 		
 	private:
