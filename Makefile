@@ -7,7 +7,7 @@ LIBS = -lGL -lX11 -lassimp
 all: GameEngine
 
 GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o BitMapHeader.o BmpLoader.o DibHeader.o
-	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o TestRenderer.o BitMapHeader.o BmpLoader.o DibHeader.o -o GameEngine $(LIBS)
+	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o BitMapHeader.o BmpLoader.o DibHeader.o -o GameEngine $(LIBS)
 
 GameEngine.o: GameEngine.cpp
 	$(CC) $(CFLAGS) GameEngine.cpp 

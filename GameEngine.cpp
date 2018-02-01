@@ -263,15 +263,14 @@ int main(int argc, char **argv)
 
     
     	
-	TestRenderer test;
-	TestRenderer test2;
+	BumpMapGLRenderer test;
+	BumpMapGLRenderer test2;
 
 	test.addShader(shader_program);
 	test.setVertices(vertPoints,pointCount);
 	test.setNormals(normalPoints,pointCount);
 	test.setTextureCoordinates(texturePoints,pointCount);
 	test.setTangents(tangentPoints,pointCount);
-	test.generateVao();
 	test.setDiffuseTexture(brickDefuseFile.getWidth(),brickDefuseFile.getHeigth(),brickDefuseFile.getData());
 	test.setNormalTexture(brickNormalFile.getWidth(),brickNormalFile.getHeigth(),brickNormalFile.getData());
 	test.setSpecularTexture(brickSpecularFile.getWidth(),brickSpecularFile.getHeigth(),brickSpecularFile.getData());
@@ -286,7 +285,6 @@ int main(int argc, char **argv)
 	test2.setNormals(normalPoints,pointCount);
 	test2.setTextureCoordinates(texturePoints,pointCount);
 	test2.setTangents(tangentPoints,pointCount);
-	test2.generateVao();
 	test2.setDiffuseTexture(brickDefuseFile.getWidth(),brickDefuseFile.getHeigth(),brickDefuseFile.getData());
 	test2.setNormalTexture(brickNormalFile.getWidth(),brickNormalFile.getHeigth(),brickNormalFile.getData());
 	test2.setSpecularTexture(brickSpecularFile.getWidth(),brickSpecularFile.getHeigth(),brickSpecularFile.getData());

@@ -1,20 +1,18 @@
-#ifndef __TESTRENDERER__
-#define __TESTRENDERER__
+#ifndef __BUMPMAPGLRENDERER__
+#define __BUMPMAPGLRENDERER__
 #define GL_GLEXT_PROTOTYPES
 #include "RenderTarget.h"
 #include <vector>
 #include <GL/gl.h>
 #include <GL/glx.h>
 
-class TestRenderer : public RenderTarget
+class BumpMapGLRenderer : public RenderTarget
 {
 	public:
-		TestRenderer();
-		~TestRenderer();
+		BumpMapGLRenderer();
+		~BumpMapGLRenderer();
 		
 		virtual void draw();
-		
-		void generateVao();
 		
 		void addShader(GLuint inShader);
 		
@@ -43,9 +41,11 @@ class TestRenderer : public RenderTarget
 		float* viewMatrix;
 		float* modelMatrix;
 		float* cameraLocation;
+		unsigned char vaoStatus;
 		unsigned int numberOfVertices;
 		
 	private:
+		void generateVao();
 		void addPoints(const unsigned int inType, GLfloat* inPoints, const unsigned int inPointCount);
 		void addTexture(const unsigned int inType, const unsigned int inWidth, const unsigned int inHeight, unsigned char* inData);
 };

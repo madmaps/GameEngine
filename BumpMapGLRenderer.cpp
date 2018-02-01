@@ -1,7 +1,6 @@
 #include "BumpMapGLRenderer.h"
 
-
-	TestRenderer::TestRenderer()
+	BumpMapGLRenderer::BumpMapGLRenderer()
 	{
 		vbos = new GLuint[4];
 		textures = new GLuint[4];
@@ -10,9 +9,10 @@
 		viewMatrix = new float[16];
 		modelMatrix = new float[16];
 		cameraLocation = new float[3];
+		vaoStatus = 0x00;
 	}
 	
-	TestRenderer::~TestRenderer()
+	BumpMapGLRenderer::~BumpMapGLRenderer()
 	{
 		delete[] vbos;
 		delete[] textures;
@@ -23,7 +23,7 @@
 		delete[] cameraLocation;
 	}
 
-	void TestRenderer::draw()
+	void BumpMapGLRenderer::draw()
 	{
 		glUseProgram(shader);
 		glActiveTexture(GL_TEXTURE0);
@@ -45,7 +45,7 @@
 
 	}
 	
-	void TestRenderer::generateVao()
+	void BumpMapGLRenderer::generateVao()
 	{
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
@@ -64,7 +64,7 @@
 		glEnableVertexAttribArray(3);
 	}
 	
-	void TestRenderer::addShader(GLuint inShader)
+	void BumpMapGLRenderer::addShader(GLuint inShader)
 	{
 		shader = inShader;
 		glUseProgram(shader);
@@ -83,7 +83,7 @@
 		glUniform1i(uniformLocations[7],3);
 	}
 	
-	void TestRenderer::updateProjectionMatrix(const float* inProjectionMatrix)
+	void BumpMapGLRenderer::updateProjectionMatrix(const float* inProjectionMatrix)
 	{
 		glUseProgram(shader);
 		for(unsigned int i = 0; i < 16; i++)
@@ -93,7 +93,7 @@
 		glUniformMatrix4fv(uniformLocations[1],1,GL_FALSE,inProjectionMatrix);
 	}
 	
-	void TestRenderer::updateViewMatrix(const float* inViewMatrix)
+	void BumpMapGLRenderer::updateViewMatrix(const float* inViewMatrix)
 	{
 		glUseProgram(shader);
 		for(unsigned int i = 0; i < 16; i++)
@@ -103,7 +103,7 @@
 		glUniformMatrix4fv(uniformLocations[0],1,GL_FALSE,inViewMatrix);
 	}
 		
-	void TestRenderer::updateModelMatrix(const float* inModelMatrix)
+	void BumpMapGLRenderer::updateModelMatrix(const float* inModelMatrix)
 	{
 		glUseProgram(shader);
 		for(unsigned int i = 0; i < 16; i++)
@@ -113,7 +113,7 @@
 		glUniformMatrix4fv(uniformLocations[2],1,GL_FALSE,inModelMatrix);
 	}
 	
-	void TestRenderer::updateCameraLocation(const float* inCameraLocation)
+	void BumpMapGLRenderer::updateCameraLocation(const float* inCameraLocation)
 	{
 		glUseProgram(shader);
 		for(unsigned int i = 0; i < 3; i++)
@@ -123,49 +123,69 @@
 		glUniform3fv(uniformLocations[3],1,inCameraLocation);
 	}
 	
-	void TestRenderer::setVertices(GLfloat* inVertices,const unsigned int numberOfPoints)
+	void BumpMapGLRenderer::setVertices(GLfloat* inVertices,const unsigned int numberOfPoints)
 	{
 		numberOfVertices = numberOfPoints;
 		addPoints(0,inVertices,numberOfPoints);
+		vaoStatus = vaoStatus | 0x01;
+		if(vaoStatus == 0x0F)
+		{
+			generateVao();
+		}
 	}
 	
-	void TestRenderer::setNormals(GLfloat* inNormals, const unsigned int numberOfPoints)
+	void BumpMapGLRenderer::setNormals(GLfloat* inNormals, const unsigned int numberOfPoints)
 	{
 		addPoints(1,inNormals,numberOfPoints);
+		vaoStatus = vaoStatus | 0x02;
+		if(vaoStatus == 0x0F)
+		{
+			generateVao();
+		}
 	}
 	
-	void TestRenderer::setTextureCoordinates(GLfloat* inTextureCoordinates,const unsigned int numberOfPoints)
+	void BumpMapGLRenderer::setTextureCoordinates(GLfloat* inTextureCoordinates,const unsigned int numberOfPoints)
 	{
 		addPoints(2,inTextureCoordinates,numberOfPoints);
+		vaoStatus = vaoStatus | 0x04;
+		if(vaoStatus == 0x0F)
+		{
+			generateVao();
+		}
 	}
 	
-	void TestRenderer::setTangents(GLfloat* inTangents,const unsigned int numberOfPoints)
+	void BumpMapGLRenderer::setTangents(GLfloat* inTangents,const unsigned int numberOfPoints)
 	{
 		addPoints(3,inTangents,numberOfPoints);
+		vaoStatus = vaoStatus | 0x08;
+		if(vaoStatus == 0x0F)
+		{
+			generateVao();
+		}
 	}
 	
-	void TestRenderer::setDiffuseTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData)
+	void BumpMapGLRenderer::setDiffuseTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData)
 	{
 		addTexture(0, inWidth, inHeight, inData);
 	}
 	
-	void TestRenderer::setNormalTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData)
+	void BumpMapGLRenderer::setNormalTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData)
 	{
 		addTexture(1, inWidth, inHeight, inData);
 	}
 
-	void TestRenderer::setSpecularTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData)
+	void BumpMapGLRenderer::setSpecularTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData)
 	{
 		addTexture(2, inWidth, inHeight, inData);
 	}
 
-	void TestRenderer::setOcclusionTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData)
+	void BumpMapGLRenderer::setOcclusionTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData)
 	{
 		addTexture(3, inWidth, inHeight, inData);
 	}
 
 
-	void TestRenderer::addPoints(const unsigned int inType, GLfloat* inPoints, const unsigned int inPointCount)
+	void BumpMapGLRenderer::addPoints(const unsigned int inType, GLfloat* inPoints, const unsigned int inPointCount)
 	{
 		int numberPerType = 0;
 		switch(inType)
@@ -187,7 +207,7 @@
 		glBufferData(GL_ARRAY_BUFFER, inPointCount * numberPerType * sizeof(GLfloat),inPoints,GL_STATIC_DRAW);  
 	}  
 	
-	void TestRenderer::addTexture(const unsigned int inType, const unsigned int inWidth, const unsigned int inHeight, unsigned char* inData)
+	void BumpMapGLRenderer::addTexture(const unsigned int inType, const unsigned int inWidth, const unsigned int inHeight, unsigned char* inData)
 	{
 		glGenTextures(1,&textures[inType]);
 		switch(inType)
