@@ -6,8 +6,8 @@ LIBS = -lGL -lX11 -lassimp
 
 all: GameEngine
 
-GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o BitMapHeader.o BmpLoader.o DibHeader.o
-	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o BitMapHeader.o BmpLoader.o DibHeader.o -o GameEngine $(LIBS)
+GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o BitMapHeader.o BmpLoader.o DibHeader.o SkyBoxGLRenderer.o
+	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o BitMapHeader.o BmpLoader.o DibHeader.o SkyBoxGLRenderer.o -o GameEngine $(LIBS)
 
 GameEngine.o: GameEngine.cpp
 	$(CC) $(CFLAGS) GameEngine.cpp 
@@ -35,6 +35,9 @@ BitMapHeader.o: BitMapHeader.cpp
 	
 DibHeader.o: DibHeader.cpp
 	$(CC) $(CFLAGS) DibHeader.cpp
+	
+SkyBoxGLRenderer.o: SkyBoxGLRenderer.cpp
+	$(CC) $(CFLAGS) SkyBoxGLRenderer.cpp
 	
 clean:
 	rm -rf *.o core.* GameEngine
