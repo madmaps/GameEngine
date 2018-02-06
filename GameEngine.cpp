@@ -20,6 +20,7 @@
 #include "assimp/postprocess.h"
 #include "assimp/Importer.hpp"
 
+#include "LoadHelper.h"
 #include "BmpLoader.h"
 #include "StandardObject.h"
 #include "BumpMapGLRenderer.h"
@@ -54,238 +55,6 @@ int main(int argc, char **argv)
 	glDepthFunc(GL_LESS);
 	
 	
-	GLfloat* vertPoints = NULL;
-	GLfloat* normalPoints = NULL;
-	GLfloat* texturePoints = NULL;
-	GLfloat* tangentPoints = NULL;
-	unsigned int pointCount = 0;
-	{
-	
-		Assimp::Importer importer;
-
-
-		const aiScene* scene = importer.ReadFile("meshes/monkey.dae",aiProcess_CalcTangentSpace | aiProcess_Triangulate);// | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-		if(!scene)
-		{
-			std::cout << "BAD!";
-		}
-
-		const aiMesh* mesh = scene->mMeshes[0];
-		pointCount = mesh->mNumVertices;
-		if(mesh->HasPositions())
-		{
-			std::cout << "Has positions" << std::endl;
-			vertPoints = new GLfloat[pointCount * 3];
-			for(unsigned int i = 0;i < pointCount;i++)
-			{
-				const aiVector3D* vp = &(mesh->mVertices[i]);
-				vertPoints[i * 3 + 0] = (GLfloat)vp->x;
-				vertPoints[i * 3 + 1] = (GLfloat)vp->y;
-				vertPoints[i * 3 + 2] = (GLfloat)vp->z;
-			}
-		}
-		if(mesh->HasNormals())
-		{
-			std::cout << "Has normals" << std::endl;
-			normalPoints = new GLfloat[pointCount * 3];
-			for(unsigned int i = 0; i < pointCount; i++)
-			{
-				const aiVector3D* vn = &(mesh->mNormals[i]);
-				normalPoints[i * 3 + 0] = (GLfloat)vn->x;
-				normalPoints[i * 3 + 1] = (GLfloat)vn->y;
-				normalPoints[i * 3 + 2] = (GLfloat)vn->z;
-			}
-		}
-
-		if(mesh->HasTextureCoords(0))
-		{
-			std::cout << "Has texture coordinates" << std::endl;
-			texturePoints = new GLfloat[pointCount * 2];
-			for(unsigned int i = 0; i < pointCount; i++)
-			{
-				const aiVector3D* vt = &(mesh->mTextureCoords[0][i]);
-				texturePoints[i * 2 + 0] = (GLfloat)vt->x;
-				texturePoints[i * 2 + 1] = (GLfloat)vt->y;
-			}
-		}
-
-		if(mesh->HasTangentsAndBitangents())
-		{
-			std::cout << "Has tangents" << std::endl;
-			tangentPoints = new GLfloat[pointCount * 4];
-			for(unsigned int i = 0; i < pointCount; i++)
-			{
-				const aiVector3D* vt = &(mesh->mTangents[i]);
-				const aiVector3D* vb = &(mesh->mBitangents[i]);
-				const aiVector3D* vn = &(mesh->mNormals[i]);
-				
-				glm::vec3 tangent = glm::vec3(vt->x,vt->y,vt->z);
-				glm::vec3 biTangent = glm::vec3(vb->x,vb->y,vb->z);
-				glm::vec3 normalVec = glm::vec3(vn->x,vn->y,vn->z);
-				
-				glm::vec3 tempTangent = glm::normalize(tangent - normalVec * glm::dot(normalVec,tangent));
-				float det = (glm::dot(glm::cross(normalVec,tangent),biTangent));
-				if(det < 0.0f)
-				{
-					det = -1.0f;
-				}
-				else
-				{
-					det = 1.0f;
-				}
-				tangentPoints[i * 4 + 0] = tempTangent.x;
-				tangentPoints[i * 4 + 1] = tempTangent.y;
-				tangentPoints[i * 4 + 2] = tempTangent.z;
-				tangentPoints[i * 4 + 3] = det;
-			}
-		}
-	}
-	
-	GLfloat* planetVertPoints = NULL;
-	GLfloat* planetNormalPoints = NULL;
-	GLfloat* planetTexturePoints = NULL;
-	GLfloat* planetTangentPoints = NULL;
-	unsigned int planetPointCount = 0;
-	{
-	
-		Assimp::Importer importer;
-
-
-		const aiScene* scene = importer.ReadFile("meshes/planet.dae",aiProcess_CalcTangentSpace | aiProcess_Triangulate);
-		if(!scene)
-		{
-			std::cout << "BAD!";
-		}
-
-		const aiMesh* mesh = scene->mMeshes[0];
-		planetPointCount = mesh->mNumVertices;
-		if(mesh->HasPositions())
-		{
-			std::cout << "Has positions" << std::endl;
-			planetVertPoints = new GLfloat[planetPointCount * 3];
-			for(unsigned int i = 0;i < planetPointCount;i++)
-			{
-				const aiVector3D* vp = &(mesh->mVertices[i]);
-				planetVertPoints[i * 3 + 0] = (GLfloat)vp->x;
-				planetVertPoints[i * 3 + 1] = (GLfloat)vp->y;
-				planetVertPoints[i * 3 + 2] = (GLfloat)vp->z;
-			}
-		}
-		if(mesh->HasNormals())
-		{
-			std::cout << "Has normals" << std::endl;
-			planetNormalPoints = new GLfloat[planetPointCount * 3];
-			for(unsigned int i = 0; i < planetPointCount; i++)
-			{
-				const aiVector3D* vn = &(mesh->mNormals[i]);
-				planetNormalPoints[i * 3 + 0] = (GLfloat)vn->x;
-				planetNormalPoints[i * 3 + 1] = (GLfloat)vn->y;
-				planetNormalPoints[i * 3 + 2] = (GLfloat)vn->z;
-			}
-		}
-
-		if(mesh->HasTextureCoords(0))
-		{
-			std::cout << "Has texture coordinates" << std::endl;
-			planetTexturePoints = new GLfloat[planetPointCount * 2];
-			for(unsigned int i = 0; i < planetPointCount; i++)
-			{
-				const aiVector3D* vt = &(mesh->mTextureCoords[0][i]);
-				planetTexturePoints[i * 2 + 0] = (GLfloat)vt->x;
-				planetTexturePoints[i * 2 + 1] = (GLfloat)vt->y;
-			}
-		}
-
-		if(mesh->HasTangentsAndBitangents())
-		{
-			std::cout << "Has tangents" << std::endl;
-			planetTangentPoints = new GLfloat[planetPointCount * 4];
-			for(unsigned int i = 0; i < planetPointCount; i++)
-			{
-				const aiVector3D* vt = &(mesh->mTangents[i]);
-				const aiVector3D* vb = &(mesh->mBitangents[i]);
-				const aiVector3D* vn = &(mesh->mNormals[i]);
-				
-				glm::vec3 tangent = glm::vec3(vt->x,vt->y,vt->z);
-				glm::vec3 biTangent = glm::vec3(vb->x,vb->y,vb->z);
-				glm::vec3 normalVec = glm::vec3(vn->x,vn->y,vn->z);
-				
-				glm::vec3 tempTangent = glm::normalize(tangent - normalVec * glm::dot(normalVec,tangent));
-				float det = (glm::dot(glm::cross(normalVec,tangent),biTangent));
-				if(det < 0.0f)
-				{
-					det = -1.0f;
-				}
-				else
-				{
-					det = 1.0f;
-				}
-				planetTangentPoints[i * 4 + 0] = tempTangent.x;
-				planetTangentPoints[i * 4 + 1] = tempTangent.y;
-				planetTangentPoints[i * 4 + 2] = tempTangent.z;
-				planetTangentPoints[i * 4 + 3] = det;
-			}
-		}
-	}
-
-
-	Assimp::Importer skyBoxMeshImporter;
-	
-	const aiScene* boxScene = skyBoxMeshImporter.ReadFile("meshes/box.dae",aiProcess_Triangulate);// | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-	if(!boxScene)
-	{
-		std::cout << "BAD!";
-	}
-	GLfloat* boxVertPoints = NULL;
-	const aiMesh* boxMesh = boxScene->mMeshes[0];
-	unsigned int totalPoints = boxMesh->mNumVertices;
-	if(boxMesh->HasPositions())
-	{
-		std::cout << "Has positions" << std::endl;
-		boxVertPoints = new GLfloat[totalPoints * 3];
-		for(unsigned int i = 0;i < totalPoints;i++)
-		{
-			const aiVector3D* vp = &(boxMesh->mVertices[i]);
-			boxVertPoints[i * 3 + 0] = (GLfloat)vp->x;
-			boxVertPoints[i * 3 + 1] = (GLfloat)vp->y;
-			boxVertPoints[i * 3 + 2] = (GLfloat)vp->z;
-		}
-	}
-
-	
-	bmpLoader brickDefuseFile;
-	bmpLoader brickNormalFile;
-	bmpLoader brickSpecularFile;
-	bmpLoader brickOcclusionFile;
-    brickDefuseFile.loadFile("Textures/brick.bmp");
-    brickNormalFile.loadFile("Textures/brickNormal.bmp");
-    brickSpecularFile.loadFile("Textures/SpecularMap.bmp");
-    brickOcclusionFile.loadFile("Textures/AmbientOcclusionMap.bmp");
-    
-	bmpLoader upSkyBox;
-	bmpLoader downSkyBox;
-	bmpLoader leftSkyBox;
-	bmpLoader rightSkyBox;
-	bmpLoader frontSkyBox;
-	bmpLoader backSkyBox;
-	upSkyBox.loadFile("Textures/upSkyBox.bmp");
-	downSkyBox.loadFile("Textures/downSkyBox.bmp");
-	leftSkyBox.loadFile("Textures/leftSkyBox.bmp");
-	rightSkyBox.loadFile("Textures/rightSkyBox.bmp");
-	frontSkyBox.loadFile("Textures/frontSkyBox.bmp");
-	backSkyBox.loadFile("Textures/backSkyBox.bmp");
-	
-	bmpLoader moonDefuseFile;
-	bmpLoader moonNormalFile;
-	bmpLoader moonSpecularFile;
-	bmpLoader moonOcclusionFile;
-	moonDefuseFile.loadFile("Textures/moonDefuse.bmp");
-	moonNormalFile.loadFile("Textures/moonNormal.bmp");
-	moonSpecularFile.loadFile("Textures/moonSpecular.bmp");
-	moonOcclusionFile.loadFile("Textures/moonOcclusion.bmp");
-
-
-    
     const char* vertex_shader =
     "#version 410\n"
     "layout(location = 0) in vec3 vertex_position;"
@@ -302,7 +71,7 @@ int main(int argc, char **argv)
    "	gl_Position = proj * view * model * vec4(vertex_position,1.0);"
     "	texture_coordinates = vertex_text;"
     
-    "	vec3 lightDirection_world = normalize(vec3(0.0, 0.0, -20.0) - cameraPosition_world);"
+    "	vec3 lightDirection_world = normalize(vec3(0.0, 0.0, -200.0) - cameraPosition_world);"
     "	vec3 bitangent = cross(vertex_normal, vtangent.xyz) * vtangent.w;"
     
     "	vec3 cameraPosition_local = vec3(inverse(model) * vec4(cameraPosition_world,1.0));"
@@ -322,7 +91,7 @@ int main(int argc, char **argv)
     "in vec3 view_dir_tan;"
     "in vec3 light_dir_tan;"
     "in vec2 texture_coordinates;"
-    "vec3 light_position_world = vec3(0.0, 0.0, 20.0);"
+    "vec3 light_position_world = vec3(0.0, 0.0, -200.0);"
     "vec3 Ls = vec3(1.0, 1.0, 1.0);"
     "vec3 Ld = vec3(1.0, 1.0, 1.0);"
     "vec3 La = vec3(0.4, 0.4, 0.4);"
@@ -398,15 +167,22 @@ int main(int argc, char **argv)
     glAttachShader(skyBoxShader, SB_f_shader);
     glLinkProgram(skyBoxShader);
     
-    
+	glm::mat4 ident = glm::mat4(1.0f);
 	glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 3.0f);
     glm::quat camRot = glm::angleAxis(0.0f,glm::vec3(0.0f, 0.0f, -1.0f));
     
-    glm::vec3 modelPos = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 modelPos = glm::vec3(0.0f, 0.0f, -10.0f);
     glm::quat modelRot = glm::angleAxis(0.0f,glm::vec3(0.0f, 0.0f, -1.0f));
     
+    glm::vec3 moonPosition = glm::vec3(0.0f, 0.0f, -3.0f);
+    glm::quat moonRotationQuat = glm::angleAxis(0.0f, glm::vec3(-1.0f, 0.0f, 0.0f));
+    
+	glm::mat4 moonTranslateMatrix = glm::translate(ident,moonPosition);
+	glm::mat4 moonRotationMatrix = glm::toMat4(moonRotationQuat);
+	glm::mat4 moonMatrix = moonTranslateMatrix * moonRotationMatrix;
+    
 
-    glm::mat4 ident = glm::mat4(1.0f);
+
 	glm::mat4 T = glm::translate(ident,-camPos);
 	glm::mat4 R = glm::toMat4(camRot);
 	glm::mat4 view_mat = R * T;
@@ -430,35 +206,27 @@ int main(int argc, char **argv)
 						0.0f, 0.0f, Sz, -1.0f,
 						0.0f, 0.0f, Pz, 0.0f};
 
-    
+
+	BumpMapGLRenderer moon;
+	loadNormalMesh(moon, "meshes/planet.dae", "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
+    moon.addShader(shader_program);
+    moon.updateProjectionMatrix(proj_mat);
+    moon.updateViewMatrix((const float*)glm::value_ptr(view_mat));
+    moon.updateModelMatrix((const float*)glm::value_ptr(moonMatrix));
+    moon.updateCameraLocation((const float*)glm::value_ptr(camPos));
     	
 	BumpMapGLRenderer test;
-
+	loadNormalMesh(test, "meshes/monkey.dae", "Textures/brick.bmp", "Textures/brickNormal.bmp", "Textures/SpecularMap.bmp", "Textures/AmbientOcclusionMap.bmp");
 	test.addShader(shader_program);
-	test.setVertices(vertPoints,pointCount);
-	test.setNormals(normalPoints,pointCount);
-	test.setTextureCoordinates(texturePoints,pointCount);
-	test.setTangents(tangentPoints,pointCount);
-	test.setDiffuseTexture(brickDefuseFile.getWidth(),brickDefuseFile.getHeigth(),brickDefuseFile.getData());
-	test.setNormalTexture(brickNormalFile.getWidth(),brickNormalFile.getHeigth(),brickNormalFile.getData());
-	test.setSpecularTexture(brickSpecularFile.getWidth(),brickSpecularFile.getHeigth(),brickSpecularFile.getData());
-	test.setOcclusionTexture(brickOcclusionFile.getWidth(),brickOcclusionFile.getHeigth(),brickOcclusionFile.getData());
 	test.updateProjectionMatrix(proj_mat);
 	test.updateViewMatrix((const float*)glm::value_ptr(view_mat));
 	test.updateModelMatrix((const float*)glm::value_ptr(modelMatrix));
 	test.updateCameraLocation((const float*)glm::value_ptr(camPos));
 		
-
 	
 	SkyBoxGLRenderer skyBox;
+	loadSkyBoxMesh(skyBox, "meshes/box.dae", "Textures/upSkyBox.bmp", "Textures/downSkyBox.bmp", "Textures/leftSkyBox.bmp", "Textures/rightSkyBox.bmp", "Textures/frontSkyBox.bmp", "Textures/backSkyBox.bmp");
 	skyBox.addShader(skyBoxShader);
-	skyBox.setVertices(boxVertPoints,totalPoints);
-	skyBox.setBoxTextureUp(upSkyBox.getWidth(),upSkyBox.getHeigth(),upSkyBox.getData());
-	skyBox.setBoxTextureDown(downSkyBox.getWidth(),downSkyBox.getHeigth(),downSkyBox.getData());
-	skyBox.setBoxTextureLeft(leftSkyBox.getWidth(),leftSkyBox.getHeigth(),leftSkyBox.getData());
-	skyBox.setBoxTextureRight(rightSkyBox.getWidth(),rightSkyBox.getHeigth(),rightSkyBox.getData());
-	skyBox.setBoxTextureFront(frontSkyBox.getWidth(),frontSkyBox.getHeigth(),frontSkyBox.getData());
-	skyBox.setBoxTextureBack(backSkyBox.getWidth(),backSkyBox.getHeigth(),backSkyBox.getData());
 	skyBox.updateProjectionMatrix(proj_mat);
 	
 	while (1)
@@ -472,6 +240,10 @@ int main(int argc, char **argv)
 		modelRotation = glm::toMat4(modelRot);
 		modelMatrix = modelTranslate * modelRotation;
 		
+		moon.updateViewMatrix((const float*)glm::value_ptr(view_mat));
+		moon.updateModelMatrix((const float*)glm::value_ptr(modelMatrix));
+		moon.updateCameraLocation((const float*)glm::value_ptr(camPos));
+		
 		test.updateViewMatrix((const float*)glm::value_ptr(view_mat));
 		test.updateModelMatrix((const float*)glm::value_ptr(modelMatrix));
 		test.updateCameraLocation((const float*)glm::value_ptr(camPos));
@@ -483,6 +255,7 @@ int main(int argc, char **argv)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		skyBox.draw();
 		test.draw();
+		moon.draw();
 		glXSwapBuffers(dpy, win);
 		
 		

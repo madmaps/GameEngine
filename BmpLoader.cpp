@@ -83,7 +83,7 @@ unsigned char* bmpLoader::getData()
 
 
 
-bool bmpLoader::loadFile(char* fileName)
+bool bmpLoader::loadFile(const char* fileName)
 {
 	file.open(fileName,std::ios::binary|std::ios::ate);
 	if(!file.is_open())
@@ -118,16 +118,14 @@ bool bmpLoader::loadFile(char* fileName)
 	float tempLength=imageSize;
 	float tempPadding=(((tempLength/numOfColorBits)/tempHeight)-tempWidth)*numOfColorBits;
 	padding=tempPadding;
-	unsigned char tempcharington = 0;
 
-	t_data=new unsigned char[imageSize];//+2*t_dibHeader->height+1];
+	t_data=new unsigned char[imageSize];
 
 	for(int j=0;j<=t_dibHeader->height-1;j++)
 	{
 		for(int i=0;i<=t_dibHeader->width*numOfColorBits+padding-1;i++)
 		{
 			t_data[(j*t_dibHeader->width*numOfColorBits+padding)+i]=buffer[(*startPosition)++];
-			tempcharington=t_data[(j*t_dibHeader->width*numOfColorBits+padding)+i];
 		}
 	}
 	

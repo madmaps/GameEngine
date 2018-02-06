@@ -10,7 +10,7 @@ class bmpLoader
 public:
 	bmpLoader();
 	~bmpLoader();
-	bool loadFile(char* info);
+	bool loadFile(const char* info);
 	unsigned char* getData();
 	int getSizeOfData();
 	int getWidth();
