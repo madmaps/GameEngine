@@ -1,9 +1,10 @@
 #include "LoadHelper.h"
+#include <iostream>
+#include <fstream>
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 #include "assimp/Importer.hpp"
 #include "assimp/cimport.h"
-#include <iostream>
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/vec3.hpp"
@@ -168,4 +169,39 @@ int loadSkyBoxMesh(SkyBoxGLRenderer& inRenderer, const char* inMeshFile, const c
 	inRenderer.setBoxTextureBack(backSkyBox.getWidth(),backSkyBox.getHeigth(),backSkyBox.getData());
 
 	return 1;
+}
+
+GLuint loadShaders(const char* inVertexShaderFile, const char* inFragmentShaderFile)
+{
+	std::ifstream vertexFile, fragmentFile;
+	int vertexLength, fragmentLength;
+	
+	vertexFile.open(inVertexShaderFile);
+	vertexFile.seekg(0,std::ios::end);
+	vertexLength = vertexFile.tellg();
+	vertexFile.seekg(0,std::ios::beg);
+	char* vertexData = new char[vertexLength];
+	vertexFile.read(vertexData, vertexLength);
+	vertexFile.close();
+
+	fragmentFile.open(inFragmentShaderFile);
+	fragmentFile.seekg(0,std::ios::end);
+	fragmentLength = fragmentFile.tellg();
+	fragmentFile.seekg(0,std::ios::beg);
+	char* fragmentData = new char[fragmentLength];
+	fragmentFile.read(fragmentData, fragmentLength);
+	fragmentFile.close();
+	
+	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vs, 1, &vertexData, NULL);
+    glCompileShader(vs);
+    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fs, 1, &fragmentData, NULL);
+    glCompileShader(fs);
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram,fs);
+    glAttachShader(shaderProgram,vs);
+    glLinkProgram(shaderProgram);
+	
+	return shaderProgram;
 }

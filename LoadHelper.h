@@ -7,4 +7,6 @@ int loadNormalMesh(BumpMapGLRenderer& inRenderer, const char* inMeshFile, const 
 
 int loadSkyBoxMesh(SkyBoxGLRenderer& inRenderer, const char* inMeshFile, const char* inUp, const char* inDown, const char* inLeft, const char* inRight, const char* inFront, const char* inBack);
 
+GLuint loadShaders(const char* inVertexShaderFile, const char* inFragmentShaderFile);
+
 #endif
