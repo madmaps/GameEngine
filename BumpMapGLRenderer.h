@@ -16,11 +16,6 @@ class BumpMapGLRenderer : public RenderTarget
 		
 		void addShader(GLuint inShader);
 		
-		void updateProjectionMatrix(const float* inProjectionMatrix);
-		void updateViewMatrix(const float* inViewMatrix);	
-		void updateModelMatrix(const float* inModelMatrix);
-		void updateCameraLocation(const float* inCameraLocation);
-		
 		void setVertices(GLfloat* inVertices, const unsigned int numberOfPoints);
 		void setNormals(GLfloat* inNormals, const unsigned int numberOfPoints);
 		void setTextureCoordinates(GLfloat* inTextureCoordinates, const unsigned int numberOfPoints);
@@ -37,10 +32,6 @@ class BumpMapGLRenderer : public RenderTarget
 		GLuint vao;
 		GLuint shader;
 		GLuint* uniformLocations;
-		float* projectionMatrix;
-		float* viewMatrix;
-		float* modelMatrix;
-		float* cameraLocation;
 		unsigned char vaoStatus;
 		unsigned int numberOfVertices;
 		

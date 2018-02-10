@@ -25,6 +25,7 @@
 #include "StandardObject.h"
 #include "BumpMapGLRenderer.h"
 #include "SkyBoxGLRenderer.h"
+#include "StandardMesh.h"
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
@@ -88,7 +89,7 @@ int main(int argc, char **argv)
 	float near = 0.1f;
 	float far = 1000.0f;
 	float fov = (67.0f * 2 * M_PI) / 360;
-	float aspect = (float)1024/(float)768;
+	float aspect = (float)1920/(float)1080;
 	float range = tan(fov * 0.5f) * near;
 	float Sx = (2.0f * near) / (range * aspect + range * aspect);
 	float Sy = near / range;
@@ -104,17 +105,17 @@ int main(int argc, char **argv)
 	loadNormalMesh(moon, "meshes/planet.dae", "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
     moon.addShader(shader_program);
     moon.updateProjectionMatrix(proj_mat);
-    moon.updateViewMatrix((const float*)glm::value_ptr(view_mat));
-    moon.updateModelMatrix((const float*)glm::value_ptr(moonMatrix));
-    moon.updateCameraLocation((const float*)glm::value_ptr(camPos));
+    moon.updateViewMatrix((float*)glm::value_ptr(view_mat));
+    moon.updateModelMatrix((float*)glm::value_ptr(moonMatrix));
+    moon.updateCameraLocation((float*)glm::value_ptr(camPos));
     	
 	BumpMapGLRenderer test;
 	loadNormalMesh(test, "meshes/monkey.dae", "Textures/brick.bmp", "Textures/brickNormal.bmp", "Textures/SpecularMap.bmp", "Textures/AmbientOcclusionMap.bmp");
 	test.addShader(shader_program);
 	test.updateProjectionMatrix(proj_mat);
-	test.updateViewMatrix((const float*)glm::value_ptr(view_mat));
-	test.updateModelMatrix((const float*)glm::value_ptr(modelMatrix));
-	test.updateCameraLocation((const float*)glm::value_ptr(camPos));
+	test.updateViewMatrix((float*)glm::value_ptr(view_mat));
+	test.updateModelMatrix((float*)glm::value_ptr(modelMatrix));
+	test.updateCameraLocation((float*)glm::value_ptr(camPos));
 		
 	
 	SkyBoxGLRenderer skyBox;
@@ -139,13 +140,13 @@ int main(int argc, char **argv)
 		moonRotationMatrix = glm::toMat4(moonRotationQuat);
 		moonMatrix = moonTranslateMatrix * moonRotationMatrix;
 		
-		moon.updateViewMatrix((const float*)glm::value_ptr(view_mat));
-		moon.updateModelMatrix((const float*)glm::value_ptr(moonMatrix));
-		moon.updateCameraLocation((const float*)glm::value_ptr(camPos));
+		moon.updateViewMatrix((float*)glm::value_ptr(view_mat));
+		moon.updateModelMatrix((float*)glm::value_ptr(moonMatrix));
+		moon.updateCameraLocation((float*)glm::value_ptr(camPos));
 		
-		test.updateViewMatrix((const float*)glm::value_ptr(view_mat));
-		test.updateModelMatrix((const float*)glm::value_ptr(modelMatrix));
-		test.updateCameraLocation((const float*)glm::value_ptr(camPos));
+		test.updateViewMatrix((float*)glm::value_ptr(view_mat));
+		test.updateModelMatrix((float*)glm::value_ptr(modelMatrix));
+		test.updateCameraLocation((float*)glm::value_ptr(camPos));
 		
 		skyBox.updateCameraRotation((const float*)glm::value_ptr(R));
 		

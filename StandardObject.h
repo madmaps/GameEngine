@@ -13,8 +13,10 @@ class StandardObject
 {
 	public:
 		StandardObject();
+		~StandardObject();
 		virtual void update() = 0;
 		virtual void draw() = 0;
+		void addComponent(Component* inComponent);
 	protected:
 		glm::vec3 position;
 		glm::vec3 scale;

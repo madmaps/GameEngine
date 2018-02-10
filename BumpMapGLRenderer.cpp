@@ -5,10 +5,6 @@ BumpMapGLRenderer::BumpMapGLRenderer()
 	vbos = new GLuint[4];
 	textures = new GLuint[4];
 	uniformLocations = new GLuint[8];
-	projectionMatrix = new float[16];
-	viewMatrix = new float[16];
-	modelMatrix = new float[16];
-	cameraLocation = new float[3];
 	vaoStatus = 0x00;
 }
 
@@ -17,10 +13,6 @@ BumpMapGLRenderer::~BumpMapGLRenderer()
 	delete[] vbos;
 	delete[] textures;
 	delete[] uniformLocations;
-	delete[] projectionMatrix;
-	delete[] viewMatrix;
-	delete[] modelMatrix;
-	delete[] cameraLocation;
 }
 
 void BumpMapGLRenderer::draw()
@@ -38,7 +30,6 @@ void BumpMapGLRenderer::draw()
 	glUniformMatrix4fv(uniformLocations[0],1,GL_FALSE,viewMatrix);
 	glUniformMatrix4fv(uniformLocations[2],1,GL_FALSE,modelMatrix);
 	glUniform3fv(uniformLocations[3],1,cameraLocation);
-
 	
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, numberOfVertices);
@@ -83,45 +74,6 @@ void BumpMapGLRenderer::addShader(GLuint inShader)
 	glUniform1i(uniformLocations[7],3);
 }
 
-void BumpMapGLRenderer::updateProjectionMatrix(const float* inProjectionMatrix)
-{
-	glUseProgram(shader);
-	for(unsigned int i = 0; i < 16; i++)
-	{
-		projectionMatrix[i] = inProjectionMatrix[i];
-	}
-	glUniformMatrix4fv(uniformLocations[1],1,GL_FALSE,inProjectionMatrix);
-}
-
-void BumpMapGLRenderer::updateViewMatrix(const float* inViewMatrix)
-{
-	glUseProgram(shader);
-	for(unsigned int i = 0; i < 16; i++)
-	{
-		viewMatrix[i] = inViewMatrix[i];
-	}
-	glUniformMatrix4fv(uniformLocations[0],1,GL_FALSE,inViewMatrix);
-}
-	
-void BumpMapGLRenderer::updateModelMatrix(const float* inModelMatrix)
-{
-	glUseProgram(shader);
-	for(unsigned int i = 0; i < 16; i++)
-	{
-		modelMatrix[i] = inModelMatrix[i];
-	}
-	glUniformMatrix4fv(uniformLocations[2],1,GL_FALSE,inModelMatrix);
-}
-
-void BumpMapGLRenderer::updateCameraLocation(const float* inCameraLocation)
-{
-	glUseProgram(shader);
-	for(unsigned int i = 0; i < 3; i++)
-	{
-		cameraLocation[i] = inCameraLocation[i];
-	}
-	glUniform3fv(uniformLocations[3],1,inCameraLocation);
-}
 
 void BumpMapGLRenderer::setVertices(GLfloat* inVertices,const unsigned int numberOfPoints)
 {
