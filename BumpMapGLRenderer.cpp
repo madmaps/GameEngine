@@ -36,6 +36,28 @@ void BumpMapGLRenderer::draw()
 
 }
 
+void BumpMapGLRenderer::updateProjectionMatrix(float* inProjectionMatrix)
+{
+	projectionMatrix = inProjectionMatrix;
+}
+
+void BumpMapGLRenderer::updateViewMatrix(float* inViewMatrix)
+{
+	viewMatrix = inViewMatrix;
+}
+	
+void BumpMapGLRenderer::updateModelMatrix(float* inModelMatrix)
+{
+	modelMatrix = inModelMatrix;
+}
+
+void BumpMapGLRenderer::updateCameraLocation(float* inCameraLocation)
+{
+	cameraLocation = inCameraLocation;
+}
+
+
+
 void BumpMapGLRenderer::generateVao()
 {
 	glGenVertexArrays(1, &vao);

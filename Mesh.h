@@ -3,24 +3,18 @@
 #include <vector>
 #include "Component.h"
 #include "RenderTarget.h"
+#include "StandardObject.h"
 
 class Mesh : public Component
 {
 public:
-	Mesh();
+	Mesh(StandardObject* inParent);
 	~Mesh();
 	virtual void draw() = 0;
-	virtual void setup() = 0;
-	virtual void updateModelMatrix(const float* inModelMatrix);
-	virtual void updateProjectionMatrix(const float* inProjectionMatrix);
-	virtual void updateViewMatrix(const float* inViewMatrix);
-	virtual void updateCameraLocation(const float* inCameraLocation);
+	virtual void addRenderer(RenderTarget* inRenderer);
 protected:
 	std::vector<RenderTarget*> renderer;
-	float* modelMatrix;
-	float* projectionMatrix;
-	float* viewMatrix;
-	float* cameraLocation;
+	StandardObject* parent;
 private:
 };
 #endif

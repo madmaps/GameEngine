@@ -15,8 +15,8 @@ class SkyBoxGLRenderer : public RenderTarget
 		
 		void addShader(GLuint inShader);
 		
-		void updateProjectionMatrix(const float* inProjectionMatrix);
-		void updateCameraRotation(const float* inCameraRotation);
+		void updateProjectionMatrix(float* inProjectionMatrix);
+		void updateCameraRotation(float* inCameraRotation);
 		
 		void setVertices(GLfloat* inVertices,const unsigned int inNumberOfVertices);
 		

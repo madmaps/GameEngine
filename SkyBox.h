@@ -1,8 +1,8 @@
-#ifndef __PLANET__
-#define __PLANET__
+#ifndef __SKYBOX__
+#define __SKYBOX__
 #include "StandardObject.h"
 
-class Planet : public StandardObject
+class SkyBox : public StandardObject
 {
 public:
 	void draw();

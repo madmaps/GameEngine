@@ -16,7 +16,10 @@ class StandardObject
 		~StandardObject();
 		virtual void update() = 0;
 		virtual void draw() = 0;
+		virtual void setup() = 0;
 		void addComponent(Component* inComponent);
+		glm::vec3 getPosition()const;
+		glm::quat getRotation()const;
 	protected:
 		glm::vec3 position;
 		glm::vec3 scale;

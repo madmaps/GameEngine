@@ -5,8 +5,6 @@ SkyBoxGLRenderer::SkyBoxGLRenderer()
 	textures = new GLuint[1];
 	vbos = new GLuint[1];
 	uniformLocations = new GLuint[3];
-	cameraRotation = new float[16];
-	projectionMatrix = new float[16];
 	vaoStatus = 0x00;
 	textureStatus = 0x00;
 	glActiveTexture(GL_TEXTURE0);
@@ -18,8 +16,6 @@ SkyBoxGLRenderer::~SkyBoxGLRenderer()
 	delete[] textures;
 	delete[] vbos;
 	delete[] uniformLocations;
-	delete[] cameraRotation;
-	delete[] projectionMatrix;
 }
 	
 void SkyBoxGLRenderer::draw()
@@ -29,7 +25,7 @@ void SkyBoxGLRenderer::draw()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textures[0]);
 	glUniformMatrix4fv(uniformLocations[1],1,GL_FALSE,projectionMatrix);
-	glUniform3fv(uniformLocations[0],1,cameraRotation);
+	glUniformMatrix4fv(uniformLocations[0],1,GL_FALSE,cameraRotation);
 	
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, numberOfVertices);
@@ -47,24 +43,14 @@ void SkyBoxGLRenderer::addShader(GLuint inShader)
 	glUniform1i(uniformLocations[2],0);
 }
 
-void SkyBoxGLRenderer::updateProjectionMatrix(const float* inProjectionMatrix)
+void SkyBoxGLRenderer::updateProjectionMatrix(float* inProjectionMatrix)
 {
-		glUseProgram(shader);
-		for(unsigned int i = 0; i < 16; i++)
-		{
-			projectionMatrix[i] = inProjectionMatrix[i];
-		}
-		glUniformMatrix4fv(uniformLocations[1],1,GL_FALSE,projectionMatrix);
+	projectionMatrix = inProjectionMatrix;
 }
 
-void SkyBoxGLRenderer::updateCameraRotation(const float* inCameraRotation)
+void SkyBoxGLRenderer::updateCameraRotation(float* inCameraRotation)
 {
-	glUseProgram(shader);
-	for(unsigned int i = 0; i < 16; i++)
-	{
-		cameraRotation[i] = inCameraRotation[i];
-	}
-		glUniformMatrix4fv(uniformLocations[0],1,GL_FALSE,cameraRotation);
+	cameraRotation = inCameraRotation;
 }
 
 void SkyBoxGLRenderer::setVertices(GLfloat* inVertices,const unsigned int inNumberOfVertices)

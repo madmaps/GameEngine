@@ -26,6 +26,9 @@
 #include "BumpMapGLRenderer.h"
 #include "SkyBoxGLRenderer.h"
 #include "StandardMesh.h"
+#include "Planet.h"
+#include "SkyBox.h"
+#include "SkyBoxMesh.h"
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
@@ -56,8 +59,6 @@ int main(int argc, char **argv)
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	
-	
-    
     GLuint shader_program = loadShaders("Shaders/NormalShader.vert","Shaders/NormalShader.frag");
     GLuint skyBoxShader = loadShaders("Shaders/SkyBoxShader.vert", "Shaders/SkyBoxShader.frag");
     
@@ -65,26 +66,9 @@ int main(int argc, char **argv)
 	glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 90.0f);
     glm::quat camRot = glm::angleAxis(0.0f,glm::vec3(0.0f, 0.0f, -1.0f));
     
-    glm::vec3 modelPos = glm::vec3(0.0f, 0.0f, -10.0f);
-    glm::quat modelRot = glm::angleAxis(0.0f,glm::vec3(0.0f, 0.0f, -1.0f));
-    
-    glm::vec3 moonPosition = glm::vec3(0.0f, 0.0f, -3.0f);
-    glm::quat moonRotationQuat = glm::angleAxis(0.0f, glm::vec3(-1.0f, 0.0f, 0.0f));
-    
-	glm::mat4 moonTranslateMatrix = glm::translate(ident,moonPosition);
-	glm::mat4 moonRotationMatrix = glm::toMat4(moonRotationQuat);
-	glm::mat4 moonMatrix = moonTranslateMatrix * moonRotationMatrix;
-    
-
-
 	glm::mat4 T = glm::translate(ident,-camPos);
 	glm::mat4 R = glm::toMat4(camRot);
 	glm::mat4 view_mat = R * T;
-	
-	glm::mat4 modelTranslate = glm::translate(ident,modelPos);
-	glm::mat4 modelRotation = glm::toMat4(modelRot);
-	glm::mat4 modelMatrix = modelTranslate * modelRotation;
-	
 	
 	float near = 0.1f;
 	float far = 1000.0f;
@@ -99,29 +83,29 @@ int main(int argc, char **argv)
 						0.0f, Sy, 0.0f, 0.0f,
 						0.0f, 0.0f, Sz, -1.0f,
 						0.0f, 0.0f, Pz, 0.0f};
-
-
-	BumpMapGLRenderer moon;
-	loadNormalMesh(moon, "meshes/planet.dae", "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
-    moon.addShader(shader_program);
-    moon.updateProjectionMatrix(proj_mat);
-    moon.updateViewMatrix((float*)glm::value_ptr(view_mat));
-    moon.updateModelMatrix((float*)glm::value_ptr(moonMatrix));
-    moon.updateCameraLocation((float*)glm::value_ptr(camPos));
-    	
-	BumpMapGLRenderer test;
-	loadNormalMesh(test, "meshes/monkey.dae", "Textures/brick.bmp", "Textures/brickNormal.bmp", "Textures/SpecularMap.bmp", "Textures/AmbientOcclusionMap.bmp");
-	test.addShader(shader_program);
-	test.updateProjectionMatrix(proj_mat);
-	test.updateViewMatrix((float*)glm::value_ptr(view_mat));
-	test.updateModelMatrix((float*)glm::value_ptr(modelMatrix));
-	test.updateCameraLocation((float*)glm::value_ptr(camPos));
-		
+						
+	Planet* moon = new Planet();
+	BumpMapGLRenderer* moonRenderer = new BumpMapGLRenderer();
+	loadNormalMesh(*moonRenderer, "meshes/planet.dae", "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
+    moonRenderer->addShader(shader_program);
+    moonRenderer->updateProjectionMatrix(proj_mat);
+    moonRenderer->updateViewMatrix((float*)glm::value_ptr(view_mat));
+    moonRenderer->updateCameraLocation((float*)glm::value_ptr(camPos));
+    StandardMesh* moonMesh = new StandardMesh(moon);
+    moonRenderer->updateModelMatrix(moonMesh->getModelMatrix());
+    moonMesh->addRenderer(moonRenderer);
+    moon->addComponent(moonMesh);
 	
-	SkyBoxGLRenderer skyBox;
-	loadSkyBoxMesh(skyBox, "meshes/box.dae", "Textures/SkyBox/skyBoxUp.bmp", "Textures/SkyBox/skyBoxDown.bmp", "Textures/SkyBox/skyBoxLeft.bmp", "Textures/SkyBox/skyBoxRight.bmp", "Textures/SkyBox/skyBoxFront.bmp", "Textures/SkyBox/skyBoxBack.bmp");
-	skyBox.addShader(skyBoxShader);
-	skyBox.updateProjectionMatrix(proj_mat);
+	SkyBox* skyBox = new SkyBox();
+	SkyBoxGLRenderer* skyBoxRenderer = new SkyBoxGLRenderer();
+	loadSkyBoxMesh(*skyBoxRenderer, "meshes/box.dae", "Textures/SkyBox/skyBoxUp.bmp", "Textures/SkyBox/skyBoxDown.bmp", "Textures/SkyBox/skyBoxLeft.bmp", "Textures/SkyBox/skyBoxRight.bmp", "Textures/SkyBox/skyBoxFront.bmp", "Textures/SkyBox/skyBoxBack.bmp");
+	skyBoxRenderer->addShader(skyBoxShader);
+	skyBoxRenderer->updateProjectionMatrix(proj_mat);
+	skyBoxRenderer->updateCameraRotation((float*)glm::value_ptr(R));
+	SkyBoxMesh* skyBoxMesh = new SkyBoxMesh(skyBox);
+	skyBoxMesh->addRenderer(skyBoxRenderer);
+	skyBox->addComponent(skyBoxMesh);
+	
 	
 	while (1)
     {
@@ -130,30 +114,13 @@ int main(int argc, char **argv)
 		R = glm::toMat4(camRot);
 		view_mat = R * T;
 		
-		modelTranslate = glm::translate(ident,modelPos);
-		modelRotation = glm::toMat4(modelRot);
-		modelMatrix = modelTranslate * modelRotation;
-		
-		glm::quat newMoonRotationQuat = glm::angleAxis(0.001f, glm::vec3(0.0f, -1.0f, 0.0f));
-		moonRotationQuat = moonRotationQuat * newMoonRotationQuat;
-		moonTranslateMatrix = glm::translate(ident,moonPosition);
-		moonRotationMatrix = glm::toMat4(moonRotationQuat);
-		moonMatrix = moonTranslateMatrix * moonRotationMatrix;
-		
-		moon.updateViewMatrix((float*)glm::value_ptr(view_mat));
-		moon.updateModelMatrix((float*)glm::value_ptr(moonMatrix));
-		moon.updateCameraLocation((float*)glm::value_ptr(camPos));
-		
-		test.updateViewMatrix((float*)glm::value_ptr(view_mat));
-		test.updateModelMatrix((float*)glm::value_ptr(modelMatrix));
-		test.updateCameraLocation((float*)glm::value_ptr(camPos));
-		
-		skyBox.updateCameraRotation((const float*)glm::value_ptr(R));
+		skyBoxRenderer->updateCameraRotation((float*)glm::value_ptr(R));
+		moon->update();
+		skyBox->update();
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		skyBox.draw();
-		test.draw();
-		moon.draw();
+		skyBox->draw();
+		moon->draw();
 		glXSwapBuffers(dpy, win);
 		
 		
@@ -209,38 +176,6 @@ int main(int argc, char **argv)
                         glm::quat rotateRight = glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 1.0f, 0.0f));
                         camRot *= rotateRight;
                     }
-                    if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_j))
-                    {
-                        glm::quat rotateLeft = glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 1.0f, 0.0f));
-                        modelRot *= rotateLeft;
-                    }
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_l))
-                    {
-                        glm::quat rotateRight = glm::angleAxis(glm::radians(-2.0f),glm::vec3(0.0f, 1.0f, 0.0f));
-                        modelRot *= rotateRight;
-                    }
-                    if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_i))
-                    {
-                        glm::quat rotateUp = glm::angleAxis(glm::radians(-2.0f),glm::vec3(1.0f, 0.0f, 0.0f));
-                        modelRot *= rotateUp;
-                        
-                    }
-                    if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_k))
-                    {
-                        glm::quat rotateUp = glm::angleAxis(glm::radians(2.0f),glm::vec3(1.0f, 0.0f, 0.0f));
-                        modelRot *= rotateUp;
-                    }
-                    if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_u))
-                    {
-                        glm::quat rotateUp = glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 0.0f, 1.0f));
-                        modelRot *= rotateUp;
-                    }
-                    if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_o))
-                    {
-                        glm::quat rotateUp = glm::angleAxis(glm::radians(-2.0f),glm::vec3(0.0f, 0.0f, 1.0f));
-                        modelRot *= rotateUp;
-                    }
-
                     break;
                 }
                 case ButtonPress:

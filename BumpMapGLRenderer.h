@@ -21,6 +21,11 @@ class BumpMapGLRenderer : public RenderTarget
 		void setTextureCoordinates(GLfloat* inTextureCoordinates, const unsigned int numberOfPoints);
 		void setTangents(GLfloat* inTangents, const unsigned int numberOfTangents);
 		
+		void updateProjectionMatrix(float* inProjectionMatrix);
+		void updateViewMatrix(float* inViewMatrix);	
+		void updateModelMatrix(float* inModelMatrix);
+		void updateCameraLocation(float* inCameraLocation);
+		
 		void setDiffuseTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData);
 		void setNormalTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData);
 		void setSpecularTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData);
@@ -32,6 +37,10 @@ class BumpMapGLRenderer : public RenderTarget
 		GLuint vao;
 		GLuint shader;
 		GLuint* uniformLocations;
+		float* projectionMatrix;
+		float* viewMatrix;
+		float* modelMatrix;
+		float* cameraLocation;
 		unsigned char vaoStatus;
 		unsigned int numberOfVertices;
 		
