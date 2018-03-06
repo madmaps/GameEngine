@@ -29,6 +29,7 @@
 #include "Planet.h"
 #include "SkyBox.h"
 #include "SkyBoxMesh.h"
+#include "Camera.h"
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
@@ -62,46 +63,34 @@ int main(int argc, char **argv)
     GLuint shader_program = loadShaders("Shaders/NormalShader.vert","Shaders/NormalShader.frag");
     GLuint skyBoxShader = loadShaders("Shaders/SkyBoxShader.vert", "Shaders/SkyBoxShader.frag");
     
-	glm::mat4 ident = glm::mat4(1.0f);
-	glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 90.0f);
-    glm::quat camRot = glm::angleAxis(0.0f,glm::vec3(0.0f, 0.0f, -1.0f));
+    Camera* shipCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
+    shipCamera->setPosition(glm::vec3(0.0f, 0.0f, 90.0f));
+    shipCamera->setRotation(glm::angleAxis(0.0f,glm::vec3(0.0f, 0.0f, -1.0f)));
+    shipCamera->update();
     
-	glm::mat4 T = glm::translate(ident,-camPos);
-	glm::mat4 R = glm::toMat4(camRot);
-	glm::mat4 view_mat = R * T;
-	
-	float near = 0.1f;
-	float far = 1000.0f;
-	float fov = (67.0f * 2 * M_PI) / 360;
-	float aspect = (float)1920/(float)1080;
-	float range = tan(fov * 0.5f) * near;
-	float Sx = (2.0f * near) / (range * aspect + range * aspect);
-	float Sy = near / range;
-	float Sz = -(far + near) / (far - near);
-	float Pz = -(2.0f * far * near) / (far - near);
-	float proj_mat[] = {Sx, 0.0f, 0.0f, 0.0f,
-						0.0f, Sy, 0.0f, 0.0f,
-						0.0f, 0.0f, Sz, -1.0f,
-						0.0f, 0.0f, Pz, 0.0f};
-						
+    
 	Planet* moon = new Planet();
 	BumpMapGLRenderer* moonRenderer = new BumpMapGLRenderer();
 	loadNormalMesh(*moonRenderer, "meshes/planet.dae", "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
     moonRenderer->addShader(shader_program);
-    moonRenderer->updateProjectionMatrix(proj_mat);
-    moonRenderer->updateViewMatrix((float*)glm::value_ptr(view_mat));
-    moonRenderer->updateCameraLocation((float*)glm::value_ptr(camPos));
+    
+	moonRenderer->updateProjectionMatrix(shipCamera->getProjectionMatrix());
+    moonRenderer->updateViewMatrix(shipCamera->getViewMatrix());
+    moonRenderer->updateCameraLocation(shipCamera->getLocationMatrix());
     StandardMesh* moonMesh = new StandardMesh(moon);
     moonRenderer->updateModelMatrix(moonMesh->getModelMatrix());
     moonMesh->addRenderer(moonRenderer);
     moon->addComponent(moonMesh);
+    moon->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    moon->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, -1.0f)));
 	
 	SkyBox* skyBox = new SkyBox();
 	SkyBoxGLRenderer* skyBoxRenderer = new SkyBoxGLRenderer();
 	loadSkyBoxMesh(*skyBoxRenderer, "meshes/box.dae", "Textures/SkyBox/skyBoxUp.bmp", "Textures/SkyBox/skyBoxDown.bmp", "Textures/SkyBox/skyBoxLeft.bmp", "Textures/SkyBox/skyBoxRight.bmp", "Textures/SkyBox/skyBoxFront.bmp", "Textures/SkyBox/skyBoxBack.bmp");
 	skyBoxRenderer->addShader(skyBoxShader);
-	skyBoxRenderer->updateProjectionMatrix(proj_mat);
-	skyBoxRenderer->updateCameraRotation((float*)glm::value_ptr(R));
+	skyBoxRenderer->updateProjectionMatrix(shipCamera->getProjectionMatrix());
+
+	skyBoxRenderer->updateCameraRotation(shipCamera->getRotationMatrix());
 	SkyBoxMesh* skyBoxMesh = new SkyBoxMesh(skyBox);
 	skyBoxMesh->addRenderer(skyBoxRenderer);
 	skyBox->addComponent(skyBoxMesh);
@@ -109,12 +98,7 @@ int main(int argc, char **argv)
 	
 	while (1)
     {
-		
-		T = glm::translate(ident,-camPos);
-		R = glm::toMat4(camRot);
-		view_mat = R * T;
-		
-		skyBoxRenderer->updateCameraRotation((float*)glm::value_ptr(R));
+		shipCamera->update();
 		moon->update();
 		skyBox->update();
 		
@@ -122,8 +106,6 @@ int main(int argc, char **argv)
 		skyBox->draw();
 		moon->draw();
 		glXSwapBuffers(dpy, win);
-		
-		
 		
         while(XPending(dpy))
         {
@@ -140,44 +122,43 @@ int main(int argc, char **argv)
                     }
                     if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_w))
                     {
-                        glm::mat3 camRotMat = glm::toMat3(camRot);
+                        glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
                         glm::vec3 movement = glm::vec3(0.0f, 0.0f, -0.3f);
                         glm::vec3 finalMovement = movement * camRotMat;
-                        camPos += finalMovement;
+                        shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
                     }
+                   
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_s))
                     {
-                        glm::mat3 camRotMat = glm::toMat3(camRot);
+                        glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
                         glm::vec3 movement = glm::vec3(0.0f, 0.0f, 0.3f);
                         glm::vec3 finalMovement = movement * camRotMat;
-                        camPos += finalMovement;
-                    }
+                        shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
+                    } 
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_a))
                     {
-                        glm::mat3 camRotMat = glm::toMat3(camRot);
+                        glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
                         glm::vec3 movement = glm::vec3(-0.3f, 0.0f, 0.0f);
                         glm::vec3 finalMovement = movement * camRotMat;
-                        camPos += finalMovement;
+                        shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
                     }
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_d))
                     {
-                        glm::mat3 camRotMat = glm::toMat3(camRot);
+                        glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
                         glm::vec3 movement = glm::vec3(0.3f, 0.0f, 0.0f);
                         glm::vec3 finalMovement = movement * camRotMat;
-                        camPos += finalMovement;
+                        shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
                     }
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_q))
                     {
-                        glm::quat rotateLeft = glm::angleAxis(glm::radians(-2.0f),glm::vec3(0.0f, 1.0f, 0.0f));
-                        camRot *= rotateLeft;
+						shipCamera->setRotation(shipCamera->getRotation() * glm::angleAxis(glm::radians(-2.0f),glm::vec3(0.0f, 1.0f, 0.0f)));
                     }
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_e))
                     {
-                        glm::quat rotateRight = glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 1.0f, 0.0f));
-                        camRot *= rotateRight;
+						shipCamera->setRotation(shipCamera->getRotation() * glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 1.0f, 0.0f)));
                     }
-                    break;
                 }
+					break;
                 case ButtonPress:
                     break;
                 case ConfigureNotify:
