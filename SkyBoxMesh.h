@@ -8,7 +8,7 @@
 class SkyBoxMesh : public Mesh
 {
 public:
-	SkyBoxMesh(StandardObject* inParent);
+	SkyBoxMesh();
 	~SkyBoxMesh();
 	virtual void draw();
 	virtual void setup();

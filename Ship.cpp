@@ -1,7 +1,7 @@
-#include "Planet.h"
+#include "Ship.h"
 #include "StandardMesh.h"
 
-void Planet::draw()
+void Ship::draw()
 {
 	ModelMesh* temp = (ModelMesh*)components.at(0);
 	glm::mat4 translateMatrix = glm::translate(glm::mat4(1.0f), position);
@@ -11,13 +11,12 @@ void Planet::draw()
 	temp->draw();
 }
 
-void Planet::update()
+void Ship::update()
 {
-	glm::quat newMoonRotationQuat = glm::angleAxis(0.001f, glm::vec3(0.0f, -1.0f, 0.0f));
-	rotation *= newMoonRotationQuat;
+	rotation *= glm::angleAxis(-0.01f, glm::vec3(0.0f, -1.0f, 0.0f));
 }
 
-void Planet::setup()
+void Ship::setup()
 {
 	
 }

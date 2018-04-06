@@ -13,7 +13,7 @@
 #include "glm/gtx/quaternion.hpp"
 #include "BmpLoader.h"
 
-int loadNormalMesh(BumpMapGLRenderer& inRenderer, const char* inMeshFile, const char* inDefuse, const char* inNormal, const char* inSpecular, const char* inAmbient)
+int loadNormalMesh(BumpMapGLRenderer& inRenderer, const char* inMeshFile, const int inObjectIndex, const char* inDefuse, const char* inNormal, const char* inSpecular, const char* inAmbient)
 {
 	
 	GLfloat* vertPoints = NULL;
@@ -30,7 +30,7 @@ int loadNormalMesh(BumpMapGLRenderer& inRenderer, const char* inMeshFile, const 
 		std::cout << "BAD!";
 	}
 
-	const aiMesh* mesh = scene->mMeshes[0];
+	const aiMesh* mesh = scene->mMeshes[inObjectIndex];
 	pointCount = mesh->mNumVertices;
 	if(mesh->HasPositions())
 	{

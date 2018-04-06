@@ -7,11 +7,11 @@ LIBS = -lGL -lX11 -lassimp
 all: GameEngine
 
 GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
-			BitMapHeader.o BmpLoader.o DibHeader.o LoadHelper.o SkyBoxGLRenderer.o StandardMesh.o \
-			Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o
+			BitMapHeader.o BmpLoader.o DibHeader.o LoadHelper.o SkyBoxGLRenderer.o ModelMesh.o StandardMesh.o \
+			Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o
 	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
-		  BitMapHeader.o BmpLoader.o DibHeader.o SkyBoxGLRenderer.o LoadHelper.o  StandardMesh.o \
-		  Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o -o GameEngine $(LIBS)
+		  BitMapHeader.o BmpLoader.o DibHeader.o SkyBoxGLRenderer.o LoadHelper.o ModelMesh.o StandardMesh.o \
+		  Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o -o GameEngine $(LIBS)
 
 GameEngine.o: GameEngine.cpp
 	$(CC) $(CFLAGS) GameEngine.cpp 
@@ -46,6 +46,9 @@ SkyBoxGLRenderer.o: SkyBoxGLRenderer.cpp
 LoadHelper.o: LoadHelper.cpp
 	$(CC) $(CFLAGS) LoadHelper.cpp
 	
+ModelMesh.o: ModelMesh.cpp
+	$(CC) $(CFLAGS) ModelMesh.cpp
+	
 StandardMesh.o: StandardMesh.cpp
 	$(CC) $(CFLAGS) StandardMesh.cpp
 	
@@ -63,6 +66,9 @@ ObjectSocket.o: ObjectSocket.cpp
 
 Camera.o: Camera.cpp
 	$(CC) $(CFLAGS) Camera.cpp
+
+Ship.o: Ship.cpp
+	$(CC) $(CFLAGS) Ship.cpp
 	
 clean:
 	rm -rf *.o core.* GameEngine

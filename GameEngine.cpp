@@ -30,6 +30,7 @@
 #include "SkyBox.h"
 #include "SkyBoxMesh.h"
 #include "Camera.h"
+#include "Ship.h"
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
@@ -69,20 +70,45 @@ int main(int argc, char **argv)
     shipCamera->update();
     
     
-	Planet* moon = new Planet();
+
 	BumpMapGLRenderer* moonRenderer = new BumpMapGLRenderer();
-	loadNormalMesh(*moonRenderer, "meshes/planet.dae", "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
+	loadNormalMesh(*moonRenderer, "meshes/planet.dae", 0, "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
     moonRenderer->addShader(shader_program);
-    
 	moonRenderer->updateProjectionMatrix(shipCamera->getProjectionMatrix());
     moonRenderer->updateViewMatrix(shipCamera->getViewMatrix());
     moonRenderer->updateCameraLocation(shipCamera->getLocationMatrix());
-    StandardMesh* moonMesh = new StandardMesh(moon);
+    StandardMesh* moonMesh = new StandardMesh();
     moonRenderer->updateModelMatrix(moonMesh->getModelMatrix());
     moonMesh->addRenderer(moonRenderer);
+    
+	Planet* moon = new Planet();
     moon->addComponent(moonMesh);
     moon->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     moon->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, -1.0f)));
+    
+    BumpMapGLRenderer** shipRenderer = new BumpMapGLRenderer*[13];
+	StandardMesh* shipMesh = new StandardMesh();
+    for(int i = 0; i < 9; i++)
+    {
+		shipRenderer[i] = new BumpMapGLRenderer();
+		loadNormalMesh(*shipRenderer[i], "meshes/tiebomber.dae", i, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
+		shipRenderer[i]->addShader(shader_program);
+		shipRenderer[i]->updateProjectionMatrix(shipCamera->getProjectionMatrix());
+		shipRenderer[i]->updateViewMatrix(shipCamera->getViewMatrix());
+		shipRenderer[i]->updateCameraLocation(shipCamera->getLocationMatrix());
+		shipRenderer[i]->updateModelMatrix(shipMesh->getModelMatrix());
+		shipMesh->addRenderer(shipRenderer[i]);
+	}
+	
+	Ship* spaceHunter = new Ship();
+    spaceHunter->addComponent(shipMesh);
+    spaceHunter->setPosition(glm::vec3(0.0f, 0.0f, 50.0f));
+    spaceHunter->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
+    
+    Ship* anotherShip = new Ship();
+    anotherShip->addComponent(shipMesh);
+    anotherShip->setPosition(glm::vec3(10.0f, 0.0f, 50.0f));
+    anotherShip->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
 	
 	SkyBox* skyBox = new SkyBox();
 	SkyBoxGLRenderer* skyBoxRenderer = new SkyBoxGLRenderer();
@@ -91,7 +117,7 @@ int main(int argc, char **argv)
 	skyBoxRenderer->updateProjectionMatrix(shipCamera->getProjectionMatrix());
 
 	skyBoxRenderer->updateCameraRotation(shipCamera->getRotationMatrix());
-	SkyBoxMesh* skyBoxMesh = new SkyBoxMesh(skyBox);
+	SkyBoxMesh* skyBoxMesh = new SkyBoxMesh();
 	skyBoxMesh->addRenderer(skyBoxRenderer);
 	skyBox->addComponent(skyBoxMesh);
 	
@@ -101,10 +127,14 @@ int main(int argc, char **argv)
 		shipCamera->update();
 		moon->update();
 		skyBox->update();
+		spaceHunter->update();
+		anotherShip->update();
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		skyBox->draw();
 		moon->draw();
+		spaceHunter->draw();
+		anotherShip->draw();
 		glXSwapBuffers(dpy, win);
 		
         while(XPending(dpy))

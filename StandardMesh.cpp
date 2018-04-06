@@ -10,14 +10,13 @@
 #include <iostream>
 
 
-StandardMesh::StandardMesh(StandardObject* inParent) : Mesh(inParent)
+StandardMesh::StandardMesh()
 {
-	modelMatrix = new float[16];
+
 }
 
 StandardMesh::~StandardMesh()
 {
-	delete[] modelMatrix;
 	for(unsigned int i = 0; i < renderer.size(); i++)
 	{
 		if(updateLocationRotation.at(i))
@@ -30,10 +29,11 @@ StandardMesh::~StandardMesh()
 
 void StandardMesh::draw()
 {
-	glm::mat4 translateMatrix = glm::translate(glm::mat4(1.0f), parent->getPosition());
+	/*glm::mat4 translateMatrix = glm::translate(glm::mat4(1.0f), parent->getPosition());
 	glm::mat4 rotationMatrix = glm::toMat4(parent->getRotation());
 	glm::mat4 matrix = translateMatrix * rotationMatrix;
-	updateModelMatrix((float*)glm::value_ptr(matrix));
+	updateModelMatrix((float*)glm::value_ptr(matrix));*/
+	
 	for(unsigned int i = 0; i < renderer.size(); i++)
 	{
 		renderer.at(i)->draw();
@@ -72,19 +72,6 @@ void StandardMesh::addRenderer(RenderTarget* inRenderer, const float* inLocation
 		tempRotationMatrix[i] = inRotationMatrix[i];
 	}
 	rotationMatrix.push_back(tempRotationMatrix);
-}
-
-void StandardMesh::updateModelMatrix(float* inModelMatrix)
-{
-	for(unsigned int i = 0; i < 16; i++)
-	{
-		modelMatrix[i] = inModelMatrix[i];
-	}
-}
-
-float* StandardMesh::getModelMatrix()const
-{
-	return modelMatrix;
 }
 
 

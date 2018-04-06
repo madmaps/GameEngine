@@ -1,7 +1,8 @@
 #include "Mesh.h"
 
-Mesh::Mesh(StandardObject* inParent) : parent(inParent)
+Mesh::Mesh()
 {
+
 }
 
 Mesh::~Mesh()

@@ -9,7 +9,7 @@
 #include "SkyBoxGLRenderer.h"
 
 
-SkyBoxMesh::SkyBoxMesh(StandardObject* inParent) : Mesh(inParent)
+SkyBoxMesh::SkyBoxMesh()
 {
 }
 
