@@ -19,6 +19,7 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 #include "assimp/Importer.hpp"
+#include "assimp/cimport.h"
 
 #include "LoadHelper.h"
 #include "BmpLoader.h"
@@ -69,10 +70,16 @@ int main(int argc, char **argv)
     shipCamera->setRotation(glm::angleAxis(0.0f,glm::vec3(0.0f, 0.0f, -1.0f)));
     shipCamera->update();
     
-    
+	Assimp::Importer importer;
+
+	const aiScene* planetScene = importer.ReadFile("meshes/planet.dae",aiProcess_CalcTangentSpace | aiProcess_Triangulate);
+	if(!planetScene)
+	{
+		std::cout << "BAD!";
+	}
 
 	BumpMapGLRenderer* moonRenderer = new BumpMapGLRenderer();
-	loadNormalMesh(*moonRenderer, "meshes/planet.dae", 0, "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
+	loadNormalMesh(planetScene, *moonRenderer, 0, "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
     moonRenderer->addShader(shader_program);
 	moonRenderer->updateProjectionMatrix(shipCamera->getProjectionMatrix());
     moonRenderer->updateViewMatrix(shipCamera->getViewMatrix());
@@ -86,29 +93,89 @@ int main(int argc, char **argv)
     moon->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     moon->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, -1.0f)));
     
-    BumpMapGLRenderer** shipRenderer = new BumpMapGLRenderer*[13];
-	StandardMesh* shipMesh = new StandardMesh();
+	const aiScene* tieBomberScene = importer.ReadFile("meshes/tiebomber.dae",aiProcess_CalcTangentSpace | aiProcess_Triangulate);
+	if(!tieBomberScene)
+	{
+		std::cout << "BAD!";
+	}
+    BumpMapGLRenderer** tieBomberRenderer = new BumpMapGLRenderer*[13];
+	StandardMesh* tieBomberMesh = new StandardMesh();
     for(int i = 0; i < 9; i++)
     {
-		shipRenderer[i] = new BumpMapGLRenderer();
-		loadNormalMesh(*shipRenderer[i], "meshes/tiebomber.dae", i, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
-		shipRenderer[i]->addShader(shader_program);
-		shipRenderer[i]->updateProjectionMatrix(shipCamera->getProjectionMatrix());
-		shipRenderer[i]->updateViewMatrix(shipCamera->getViewMatrix());
-		shipRenderer[i]->updateCameraLocation(shipCamera->getLocationMatrix());
-		shipRenderer[i]->updateModelMatrix(shipMesh->getModelMatrix());
-		shipMesh->addRenderer(shipRenderer[i]);
+		std::cout << "Part: " << i << std::endl;
+		tieBomberRenderer[i] = new BumpMapGLRenderer();
+		loadNormalMesh(tieBomberScene, *tieBomberRenderer[i], i, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
+		tieBomberRenderer[i]->addShader(shader_program);
+		tieBomberRenderer[i]->updateProjectionMatrix(shipCamera->getProjectionMatrix());
+		tieBomberRenderer[i]->updateViewMatrix(shipCamera->getViewMatrix());
+		tieBomberRenderer[i]->updateCameraLocation(shipCamera->getLocationMatrix());
+		tieBomberRenderer[i]->updateModelMatrix(tieBomberMesh->getModelMatrix());
+		tieBomberMesh->addRenderer(tieBomberRenderer[i]);
 	}
 	
+	
+	const aiScene* tieFighterScene = importer.ReadFile("meshes/tiefighter.dae",aiProcess_CalcTangentSpace | aiProcess_Triangulate);
+	if(!tieFighterScene)
+	{
+		std::cout << "BAD!";
+	}
+	BumpMapGLRenderer** tieFighterRenderer = new BumpMapGLRenderer*[20];
+	StandardMesh* tieFighterMesh = new StandardMesh();
+	std::cout << "Loading TieFighter" << std::endl;
+	for(int i = 0; i < 8; i++)
+	{
+		std::cout << "Part: " << i << std::endl;
+		tieFighterRenderer[i] = new BumpMapGLRenderer();
+		loadNormalMesh(tieFighterScene, *tieFighterRenderer[i], i, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
+		tieFighterRenderer[i]->addShader(shader_program);
+		tieFighterRenderer[i]->updateProjectionMatrix(shipCamera->getProjectionMatrix());
+		tieFighterRenderer[i]->updateViewMatrix(shipCamera->getViewMatrix());
+		tieFighterRenderer[i]->updateCameraLocation(shipCamera->getLocationMatrix());
+		tieFighterRenderer[i]->updateModelMatrix(tieFighterMesh->getModelMatrix());
+		tieFighterMesh->addRenderer(tieFighterRenderer[i]);
+	}
+	
+	/*const aiScene* starDestroyerScene = importer.ReadFile("meshes/stardestroyer.dae",aiProcess_CalcTangentSpace | aiProcess_Triangulate);
+	if(!starDestroyerScene)
+	{
+		std::cout << "BAD!";
+	}
+	BumpMapGLRenderer** starDestroyerRenderer = new BumpMapGLRenderer*[100];
+	StandardMesh* starDestroyerMesh = new StandardMesh();
+	std::cout << "Loading StarDestroyer" << std::endl;
+	for(int i = 0; i < 56; i++)
+	{
+		std::cout << "Part: " << i << std::endl;
+		starDestroyerRenderer[i] = new BumpMapGLRenderer();
+		loadNormalMesh(starDestroyerScene, *starDestroyerRenderer[i], i, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
+		starDestroyerRenderer[i]->addShader(shader_program);
+		starDestroyerRenderer[i]->updateProjectionMatrix(shipCamera->getProjectionMatrix());
+		starDestroyerRenderer[i]->updateViewMatrix(shipCamera->getViewMatrix());
+		starDestroyerRenderer[i]->updateCameraLocation(shipCamera->getLocationMatrix());
+		starDestroyerRenderer[i]->updateModelMatrix(starDestroyerMesh->getModelMatrix());
+		starDestroyerMesh->addRenderer(starDestroyerRenderer[i]);
+		
+	}*/
+
+	
 	Ship* spaceHunter = new Ship();
-    spaceHunter->addComponent(shipMesh);
+    spaceHunter->addComponent(tieFighterMesh);
     spaceHunter->setPosition(glm::vec3(0.0f, 0.0f, 50.0f));
     spaceHunter->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
+    spaceHunter->setYawSettings(10.0f, 0.5f);
+    spaceHunter->setPitchSettings(10.0f, 0.5f);
+    spaceHunter->setRollSettings(25.0f, 0.5f);
+
     
     Ship* anotherShip = new Ship();
-    anotherShip->addComponent(shipMesh);
-    anotherShip->setPosition(glm::vec3(10.0f, 0.0f, 50.0f));
-    anotherShip->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
+    anotherShip->addComponent(tieFighterMesh);
+    anotherShip->setPosition(glm::vec3(10.0f, 0.0f, -200.0f));
+    anotherShip->setRotation(glm::angleAxis(1.570796327f, glm::vec3(0.0f, 1.0f, 0.0f)));
+    
+    Ship* candicesShip = new Ship();
+    candicesShip->addComponent(tieBomberMesh);
+    candicesShip->setPosition(glm::vec3(-10.0f, 0.0f, 20.0f));
+    candicesShip->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
 	
 	SkyBox* skyBox = new SkyBox();
 	SkyBoxGLRenderer* skyBoxRenderer = new SkyBoxGLRenderer();
@@ -129,12 +196,14 @@ int main(int argc, char **argv)
 		skyBox->update();
 		spaceHunter->update();
 		anotherShip->update();
+		candicesShip->update();
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		skyBox->draw();
 		moon->draw();
 		spaceHunter->draw();
 		anotherShip->draw();
+		candicesShip->draw();
 		glXSwapBuffers(dpy, win);
 		
         while(XPending(dpy))
@@ -187,6 +256,40 @@ int main(int argc, char **argv)
                     {
 						shipCamera->setRotation(shipCamera->getRotation() * glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 1.0f, 0.0f)));
                     }
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_u))
+					{
+						spaceHunter->yaw(1);
+					}
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_o))
+					{
+						spaceHunter->yaw(-1);
+					}
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_i))
+					{
+						spaceHunter->pitch(1);
+					}
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_k))
+					{
+						spaceHunter->pitch(-1);
+					}
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_j))
+					{
+						spaceHunter->roll(1);
+					}
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_l))
+					{
+						spaceHunter->roll(-1);
+					}
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_h))
+					{
+						spaceHunter->yaw(0);
+						spaceHunter->pitch(0);
+						spaceHunter->roll(0);
+					}
+
+
+
+
                 }
 					break;
                 case ButtonPress:

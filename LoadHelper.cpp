@@ -13,7 +13,7 @@
 #include "glm/gtx/quaternion.hpp"
 #include "BmpLoader.h"
 
-int loadNormalMesh(BumpMapGLRenderer& inRenderer, const char* inMeshFile, const int inObjectIndex, const char* inDefuse, const char* inNormal, const char* inSpecular, const char* inAmbient)
+int loadNormalMesh(const aiScene* inScene, BumpMapGLRenderer& inRenderer,const int inObjectIndex, const char* inDefuse, const char* inNormal, const char* inSpecular, const char* inAmbient)
 {
 	
 	GLfloat* vertPoints = NULL;
@@ -22,19 +22,13 @@ int loadNormalMesh(BumpMapGLRenderer& inRenderer, const char* inMeshFile, const 
 	GLfloat* tangentPoints = NULL;
 	unsigned int pointCount = 0;
 
-	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(inMeshFile,aiProcess_CalcTangentSpace | aiProcess_Triangulate);
-	if(!scene)
-	{
-		std::cout << "BAD!";
-	}
 
-	const aiMesh* mesh = scene->mMeshes[inObjectIndex];
+	const aiMesh* mesh = inScene->mMeshes[inObjectIndex];
 	pointCount = mesh->mNumVertices;
 	if(mesh->HasPositions())
 	{
-		std::cout << "Has positions" << std::endl;
+		//std::cout << "Has positions" << std::endl;
 		vertPoints = new GLfloat[pointCount * 3];
 		for(unsigned int i = 0;i < pointCount;i++)
 		{
@@ -46,7 +40,7 @@ int loadNormalMesh(BumpMapGLRenderer& inRenderer, const char* inMeshFile, const 
 	}
 	if(mesh->HasNormals())
 	{
-		std::cout << "Has normals" << std::endl;
+		//std::cout << "Has normals" << std::endl;
 		normalPoints = new GLfloat[pointCount * 3];
 		for(unsigned int i = 0; i < pointCount; i++)
 		{
@@ -59,7 +53,7 @@ int loadNormalMesh(BumpMapGLRenderer& inRenderer, const char* inMeshFile, const 
 
 	if(mesh->HasTextureCoords(0))
 	{
-		std::cout << "Has texture coordinates" << std::endl;
+		//std::cout << "Has texture coordinates" << std::endl;
 		texturePoints = new GLfloat[pointCount * 2];
 		for(unsigned int i = 0; i < pointCount; i++)
 		{
@@ -71,7 +65,7 @@ int loadNormalMesh(BumpMapGLRenderer& inRenderer, const char* inMeshFile, const 
 
 	if(mesh->HasTangentsAndBitangents())
 	{
-		std::cout << "Has tangents" << std::endl;
+		//std::cout << "Has tangents" << std::endl;
 		tangentPoints = new GLfloat[pointCount * 4];
 		for(unsigned int i = 0; i < pointCount; i++)
 		{
