@@ -54,7 +54,7 @@ void Camera::setup()
 {
 }
 
-void Camera::update()
+void Camera::update(double timeLapse)
 {
 	updateViewMatrix();
 	updateLocation();

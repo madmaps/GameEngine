@@ -8,10 +8,10 @@ all: GameEngine
 
 GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
 			BitMapHeader.o BmpLoader.o DibHeader.o LoadHelper.o SkyBoxGLRenderer.o ModelMesh.o StandardMesh.o \
-			Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o
+			Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o
 	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
 		  BitMapHeader.o BmpLoader.o DibHeader.o SkyBoxGLRenderer.o LoadHelper.o ModelMesh.o StandardMesh.o \
-		  Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o -o GameEngine $(LIBS)
+		  Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o -o GameEngine $(LIBS)
 
 GameEngine.o: GameEngine.cpp
 	$(CC) $(CFLAGS) GameEngine.cpp 
@@ -69,6 +69,9 @@ Camera.o: Camera.cpp
 
 Ship.o: Ship.cpp
 	$(CC) $(CFLAGS) Ship.cpp
+
+Timer.o: Timer.cpp
+	$(CC) $(CFLAGS) Timer.cpp
 	
 clean:
 	rm -rf *.o core.* GameEngine

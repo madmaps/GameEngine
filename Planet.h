@@ -5,11 +5,14 @@
 class Planet : public StandardObject
 {
 public:
+	Planet();
+	~Planet();
 	void draw();
-	void update();
+	void update(double timeLapse);
 	void setup();
 protected:
 private:
+	float rotationSpeed;
 };
 
 #endif

@@ -7,7 +7,7 @@ void SkyBox::draw()
 	temp->draw();
 }
 
-void SkyBox::update()
+void SkyBox::update(double timeLapse)
 {
 }
 

@@ -32,6 +32,7 @@
 #include "SkyBoxMesh.h"
 #include "Camera.h"
 #include "Ship.h"
+#include "Timer.h"
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
@@ -68,7 +69,7 @@ int main(int argc, char **argv)
     Camera* shipCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
     shipCamera->setPosition(glm::vec3(0.0f, 0.0f, 90.0f));
     shipCamera->setRotation(glm::angleAxis(0.0f,glm::vec3(0.0f, 0.0f, -1.0f)));
-    shipCamera->update();
+    shipCamera->update(0);
     
 	Assimp::Importer importer;
 
@@ -135,7 +136,7 @@ int main(int argc, char **argv)
 		tieFighterMesh->addRenderer(tieFighterRenderer[i]);
 	}
 	
-	/*const aiScene* starDestroyerScene = importer.ReadFile("meshes/stardestroyer.dae",aiProcess_CalcTangentSpace | aiProcess_Triangulate);
+	const aiScene* starDestroyerScene = importer.ReadFile("meshes/stardestroyer.dae",aiProcess_CalcTangentSpace | aiProcess_Triangulate);
 	if(!starDestroyerScene)
 	{
 		std::cout << "BAD!";
@@ -155,22 +156,23 @@ int main(int argc, char **argv)
 		starDestroyerRenderer[i]->updateModelMatrix(starDestroyerMesh->getModelMatrix());
 		starDestroyerMesh->addRenderer(starDestroyerRenderer[i]);
 		
-	}*/
+	}
 
 	
 	Ship* spaceHunter = new Ship();
-    spaceHunter->addComponent(tieFighterMesh);
-    spaceHunter->setPosition(glm::vec3(0.0f, 0.0f, 50.0f));
-    spaceHunter->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
-    spaceHunter->setYawSettings(10.0f, 0.5f);
-    spaceHunter->setPitchSettings(10.0f, 0.5f);
-    spaceHunter->setRollSettings(25.0f, 0.5f);
+    spaceHunter->addComponent(starDestroyerMesh);
+    spaceHunter->setPosition(glm::vec3(10.0f, 0.0f, -200.0f));
+    spaceHunter->setRotation(glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    spaceHunter->setYawSettings(1.0f, 0.75f);
+    spaceHunter->setPitchSettings(1.0f, 0.75f);
+    spaceHunter->setRollSettings(2.0f, 0.75f);
+    spaceHunter->setAccelerationSettings(1.0f, 0.3f, 50.0f);
 
     
     Ship* anotherShip = new Ship();
-    anotherShip->addComponent(tieFighterMesh);
+    anotherShip->addComponent(tieBomberMesh);
     anotherShip->setPosition(glm::vec3(10.0f, 0.0f, -200.0f));
-    anotherShip->setRotation(glm::angleAxis(1.570796327f, glm::vec3(0.0f, 1.0f, 0.0f)));
+    anotherShip->setRotation(glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
     
     Ship* candicesShip = new Ship();
     candicesShip->addComponent(tieBomberMesh);
@@ -188,15 +190,20 @@ int main(int argc, char **argv)
 	skyBoxMesh->addRenderer(skyBoxRenderer);
 	skyBox->addComponent(skyBoxMesh);
 	
+	Timer* gameClock = new Timer();
+	
+	gameClock->start();
+	double timeLapse;
 	
 	while (1)
     {
-		shipCamera->update();
-		moon->update();
-		skyBox->update();
-		spaceHunter->update();
-		anotherShip->update();
-		candicesShip->update();
+		timeLapse = gameClock->getTimeLapse();
+		shipCamera->update(timeLapse);
+		moon->update(timeLapse);
+		skyBox->update(timeLapse);
+		spaceHunter->update(timeLapse);
+		anotherShip->update(timeLapse);
+		candicesShip->update(timeLapse);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		skyBox->draw();
@@ -280,11 +287,22 @@ int main(int argc, char **argv)
 					{
 						spaceHunter->roll(-1);
 					}
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_y))
+					{
+						spaceHunter->accelerate(1);
+					}
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_n))
+					{
+						spaceHunter->accelerate(-1);
+					}
+
+
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_h))
 					{
 						spaceHunter->yaw(0);
 						spaceHunter->pitch(0);
 						spaceHunter->roll(0);
+						spaceHunter->accelerate(0);
 					}
 
 

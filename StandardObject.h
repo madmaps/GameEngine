@@ -15,7 +15,7 @@ class StandardObject
 	public:
 		StandardObject();
 		~StandardObject();
-		virtual void update() = 0;
+		virtual void update(double timeLapse) = 0;
 		virtual void draw() = 0;
 		virtual void setup() = 0;
 		void addComponent(Component* inComponent);

@@ -1,6 +1,15 @@
 #include "Planet.h"
 #include "StandardMesh.h"
 
+Planet::Planet()
+{
+	rotationSpeed = 15.0f;
+}
+
+Planet::~Planet()
+{
+}
+
 void Planet::draw()
 {
 	ModelMesh* temp = (ModelMesh*)components.at(0);
@@ -11,9 +20,9 @@ void Planet::draw()
 	temp->draw();
 }
 
-void Planet::update()
+void Planet::update(double timeLapse)
 {
-	glm::quat newMoonRotationQuat = glm::angleAxis(0.001f, glm::vec3(0.0f, -1.0f, 0.0f));
+	glm::quat newMoonRotationQuat = glm::angleAxis(glm::radians(rotationSpeed*(float)timeLapse), glm::vec3(0.0f, -1.0f, 0.0f));
 	rotation *= newMoonRotationQuat;
 }
 

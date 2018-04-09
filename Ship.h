@@ -8,22 +8,27 @@ public:
 	Ship();
 	~Ship();
 	void draw();
-	void update();
+	void update(double timeLapse);
 	void setup();
 	
 	void yaw(const float inYaw);
 	void pitch(const float inPitch);
 	void roll(const float inRoll);
 	
+	void accelerate(const float inAcceleration);
+	
 	void setYawSettings(const float inMaxYaw, const float inRateOfYaw);
 	void setPitchSettings(const float inMaxPitch, const float inRateOfPitch);
 	void setRollSettings(const float inMaxRoll, const float inRateOfRoll);
+	
+	void setAccelerationSettings(const float inMaxAcceleration, const float inRateOfAcceleration, const float inMaxSpeed);
 
 
 protected:
-	void updateYaw();
-	void updatePitch();
-	void updateRoll();
+	void updateYaw(double timeLapse);
+	void updatePitch(double timeLapse);
+	void updateRoll(double timeLapse);
+	void updateAcceleration(double timeLapse);
 
 
 	float desiredYaw;
@@ -42,6 +47,7 @@ protected:
 	float actualAcceleration;
 	float maxAcceleration;
 	float rateOfAcceleration;
+	float maxSpeed;
 	float speed;
 private:
 };

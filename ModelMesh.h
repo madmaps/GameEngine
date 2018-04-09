@@ -9,7 +9,7 @@ public:
 	~ModelMesh();
 	virtual void draw()=0;
 	virtual void setup()=0;
-	virtual void update()=0;
+	virtual void update(double timeLapse)=0;
 	virtual void updateModelMatrix(float* inModelMatrix);
 	virtual float* getModelMatrix()const;
 protected:

@@ -12,7 +12,7 @@ public:
 	~SkyBoxMesh();
 	virtual void draw();
 	virtual void setup();
-	virtual void update();
+	virtual void update(double timeLapse);
 protected:
 
 	

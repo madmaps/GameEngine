@@ -3,6 +3,25 @@
 
 Ship::Ship()
 {
+	desiredYaw = 0;
+	desiredPitch = 0;
+	desiredRoll = 0;
+	actualYaw = 0;
+	actualPitch = 0;
+	actualRoll = 0;
+	maxYaw = 0;
+	maxPitch = 0;
+	maxRoll = 0;
+	rateOfYaw = 0;
+	rateOfPitch = 0;
+	rateOfRoll = 0;
+	desiredAcceleration = 0;
+	actualAcceleration = 0;
+	maxAcceleration = 0;
+	rateOfAcceleration = 0;
+	maxSpeed = 0;
+	speed = 0;
+
 }
 
 Ship::~Ship()
@@ -21,11 +40,12 @@ void Ship::draw()
 
 
 
-void Ship::update()
+void Ship::update(double timeLapse)
 {
-	updateYaw();
-	updatePitch();
-	updateRoll();
+	updateYaw(timeLapse);
+	updatePitch(timeLapse);
+	updateRoll(timeLapse);
+	updateAcceleration(timeLapse);
 }
 
 void Ship::setup()
@@ -48,6 +68,11 @@ void Ship::roll(const float inRoll)
 	desiredRoll = inRoll*maxRoll;
 }
 
+void Ship::accelerate(const float inAcceleration)
+{
+	desiredAcceleration = inAcceleration * maxAcceleration;
+}
+
 
 void Ship::setYawSettings(const float inMaxYaw, const float inRateOfYaw)
 {
@@ -67,33 +92,46 @@ void Ship::setRollSettings(const float inMaxRoll, const float inRateOfRoll)
 	rateOfRoll = inRateOfRoll;
 }
 
-
-void Ship::updateYaw()
+void Ship::setAccelerationSettings(const float inMaxAcceleration, const float inRateOfAcceleration, const float inMaxSpeed)
 {
-	actualYaw += (rateOfYaw * (desiredYaw - actualYaw));
+	maxAcceleration = inMaxAcceleration;
+	rateOfAcceleration = inRateOfAcceleration;
+	maxSpeed = inMaxSpeed;
+}
+
+
+void Ship::updateYaw(double timeLapse)
+{
+	actualYaw += (rateOfYaw * (desiredYaw - actualYaw)) * timeLapse;
 	rotation *= glm::angleAxis(glm::radians(actualYaw),glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void Ship::updatePitch()
+void Ship::updatePitch(double timeLapse)
 {
-	actualPitch += (rateOfPitch * (desiredPitch - actualPitch));
+	actualPitch += (rateOfPitch * (desiredPitch - actualPitch)) * timeLapse;
 	rotation *= glm::angleAxis(glm::radians(actualPitch),glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
-void Ship::updateRoll()
+void Ship::updateRoll(double timeLapse)
 {
-	actualRoll += (rateOfRoll * (desiredRoll - actualRoll));
+	actualRoll += (rateOfRoll * (desiredRoll - actualRoll)) * timeLapse;
 	rotation *= glm::angleAxis(glm::radians(actualRoll),glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
+void Ship::updateAcceleration(double timeLapse)
+{
+	actualAcceleration += (rateOfAcceleration * (desiredAcceleration - actualAcceleration)) * timeLapse;
+	speed += actualAcceleration;
+	if(speed > maxSpeed)
+	{
+		speed = maxSpeed;
+	}
+	if(speed < -maxSpeed)
+	{
+		speed = -maxSpeed;
+	}
+	
+	glm::vec3 movement = glm::vec3(0.0f, 0.0f, (speed * (float)timeLapse));
+	position +=  glm::toMat3(rotation) * movement;
+}
 
-
-
-
-/*shipCamera->setRotation(shipCamera->getRotation() * glm::angleAxis(glm::radians(-2.0f),glm::vec3(0.0f, 1.0f, 0.0f)));
-
-
-glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
-glm::vec3 movement = glm::vec3(0.3f, 0.0f, 0.0f);
-glm::vec3 finalMovement = movement * camRotMat;
-shipCamera->setPosition(shipCamera->getPosition() + finalMovement);*/

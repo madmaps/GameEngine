@@ -6,7 +6,7 @@ class SkyBox : public StandardObject
 {
 public:
 	void draw();
-	void update();
+	void update(double timeLapse);
 	void setup();
 protected:
 private:

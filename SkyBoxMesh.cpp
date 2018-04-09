@@ -29,7 +29,7 @@ void SkyBoxMesh::setup()
 {
 }
 
-void SkyBoxMesh::update()
+void SkyBoxMesh::update(double timeLapse)
 {
 }
 

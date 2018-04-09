@@ -7,7 +7,7 @@ class Camera : public StandardObject
 public:
 	Camera(const float& inNear, const float& inFar, const float& inFieldOfView, const unsigned int& inWidth, const unsigned int& inHeight);
 	~Camera();
-	virtual void update();
+	virtual void update(double timeLapse);
 	virtual void draw();
 	virtual void setup();
 	void updateWidthHeight(const unsigned int& inWidth, const unsigned int& inHeight);

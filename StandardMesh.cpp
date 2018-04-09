@@ -44,7 +44,7 @@ void StandardMesh::setup()
 {
 }
 
-void StandardMesh::update()
+void StandardMesh::update(double timeLapse)
 {
 }
 

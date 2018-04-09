@@ -11,7 +11,7 @@ public:
 	~StandardMesh();
 	virtual void draw();
 	virtual void setup();
-	virtual void update();
+	virtual void update(double timeLapse);
 	virtual void addRenderer(RenderTarget* inRenderer);
 	virtual void addRenderer(RenderTarget* inRenderer, const float* inLocationMatrix, const float* inRotationMatrix);
 protected:
