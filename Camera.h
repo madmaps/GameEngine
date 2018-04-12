@@ -10,6 +10,7 @@ public:
 	virtual void update(double timeLapse);
 	virtual void draw();
 	virtual void setup();
+	void useSettings(const Camera& inCamera);
 	void updateWidthHeight(const unsigned int& inWidth, const unsigned int& inHeight);
 	void updateFieldOfView(const float& inFieldOfView);
 	void updateNearFar(const float& inNear,const float& inFar);

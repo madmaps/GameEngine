@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include <math.h>
+#include <iostream>
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/vec3.hpp"
@@ -53,6 +54,42 @@ void Camera::draw()
 void Camera::setup()
 {
 }
+
+
+
+void Camera::useSettings(const Camera& inCamera)
+{
+	for(unsigned int i = 0; i < 16; i++)
+	{
+		projectionMatrix[i] = inCamera.projectionMatrix[i];
+	}
+	
+	for(unsigned int i = 0; i < 16; i++)
+	{
+		viewMatrix[i] = inCamera.viewMatrix[i];
+	}
+	
+	for(unsigned int i = 0; i < 3; i++)
+	{
+		locationVector[i] = inCamera.locationVector[i];
+	}
+	
+	for(unsigned int i = 0; i < 16; i++)
+	{
+		rotationMatrix[i] = inCamera.rotationMatrix[i];
+	}
+	position = inCamera.position;
+	rotation = inCamera.rotation;
+	near = inCamera.near;
+	far = inCamera.far;
+	fieldOfView = inCamera.fieldOfView;
+	width = inCamera.width;
+	height = inCamera.height;
+	setupProjectionMatrix();
+	updateViewMatrix();
+}
+	
+
 
 void Camera::update(double timeLapse)
 {

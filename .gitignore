@@ -1,0 +1,6 @@
+assimp/
+glm/
+meshes/
+Textures/
+*.o
+GameEngine

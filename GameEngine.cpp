@@ -8,6 +8,7 @@
 #include <GL/glx.h> 
 #include <X11/X.h> 
 #include <X11/keysym.h>
+#include <vector>
 
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -71,6 +72,19 @@ int main(int argc, char **argv)
     shipCamera->setRotation(glm::angleAxis(0.0f,glm::vec3(0.0f, 0.0f, -1.0f)));
     shipCamera->update(0);
     
+    Camera* backCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
+    backCamera->setPosition(glm::vec3(0.0f, 0.0f, -90.0f));
+    backCamera->setRotation(glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    
+    Camera* activeCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
+    
+    std::vector<Camera*> cameraList;
+    
+    cameraList.push_back(shipCamera);
+    cameraList.push_back(backCamera);
+    
+    activeCamera->useSettings(*shipCamera);
+    
 	Assimp::Importer importer;
 
 	const aiScene* planetScene = importer.ReadFile("meshes/planet.dae",aiProcess_CalcTangentSpace | aiProcess_Triangulate);
@@ -82,9 +96,9 @@ int main(int argc, char **argv)
 	BumpMapGLRenderer* moonRenderer = new BumpMapGLRenderer();
 	loadNormalMesh(planetScene, *moonRenderer, 0, "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
     moonRenderer->addShader(shader_program);
-	moonRenderer->updateProjectionMatrix(shipCamera->getProjectionMatrix());
-    moonRenderer->updateViewMatrix(shipCamera->getViewMatrix());
-    moonRenderer->updateCameraLocation(shipCamera->getLocationMatrix());
+	moonRenderer->updateProjectionMatrix(activeCamera->getProjectionMatrix());
+    moonRenderer->updateViewMatrix(activeCamera->getViewMatrix());
+    moonRenderer->updateCameraLocation(activeCamera->getLocationMatrix());
     StandardMesh* moonMesh = new StandardMesh();
     moonRenderer->updateModelMatrix(moonMesh->getModelMatrix());
     moonMesh->addRenderer(moonRenderer);
@@ -107,9 +121,9 @@ int main(int argc, char **argv)
 		tieBomberRenderer[i] = new BumpMapGLRenderer();
 		loadNormalMesh(tieBomberScene, *tieBomberRenderer[i], i, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
 		tieBomberRenderer[i]->addShader(shader_program);
-		tieBomberRenderer[i]->updateProjectionMatrix(shipCamera->getProjectionMatrix());
-		tieBomberRenderer[i]->updateViewMatrix(shipCamera->getViewMatrix());
-		tieBomberRenderer[i]->updateCameraLocation(shipCamera->getLocationMatrix());
+		tieBomberRenderer[i]->updateProjectionMatrix(activeCamera->getProjectionMatrix());
+		tieBomberRenderer[i]->updateViewMatrix(activeCamera->getViewMatrix());
+		tieBomberRenderer[i]->updateCameraLocation(activeCamera->getLocationMatrix());
 		tieBomberRenderer[i]->updateModelMatrix(tieBomberMesh->getModelMatrix());
 		tieBomberMesh->addRenderer(tieBomberRenderer[i]);
 	}
@@ -129,9 +143,9 @@ int main(int argc, char **argv)
 		tieFighterRenderer[i] = new BumpMapGLRenderer();
 		loadNormalMesh(tieFighterScene, *tieFighterRenderer[i], i, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
 		tieFighterRenderer[i]->addShader(shader_program);
-		tieFighterRenderer[i]->updateProjectionMatrix(shipCamera->getProjectionMatrix());
-		tieFighterRenderer[i]->updateViewMatrix(shipCamera->getViewMatrix());
-		tieFighterRenderer[i]->updateCameraLocation(shipCamera->getLocationMatrix());
+		tieFighterRenderer[i]->updateProjectionMatrix(activeCamera->getProjectionMatrix());
+		tieFighterRenderer[i]->updateViewMatrix(activeCamera->getViewMatrix());
+		tieFighterRenderer[i]->updateCameraLocation(activeCamera->getLocationMatrix());
 		tieFighterRenderer[i]->updateModelMatrix(tieFighterMesh->getModelMatrix());
 		tieFighterMesh->addRenderer(tieFighterRenderer[i]);
 	}
@@ -150,9 +164,9 @@ int main(int argc, char **argv)
 		starDestroyerRenderer[i] = new BumpMapGLRenderer();
 		loadNormalMesh(starDestroyerScene, *starDestroyerRenderer[i], i, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
 		starDestroyerRenderer[i]->addShader(shader_program);
-		starDestroyerRenderer[i]->updateProjectionMatrix(shipCamera->getProjectionMatrix());
-		starDestroyerRenderer[i]->updateViewMatrix(shipCamera->getViewMatrix());
-		starDestroyerRenderer[i]->updateCameraLocation(shipCamera->getLocationMatrix());
+		starDestroyerRenderer[i]->updateProjectionMatrix(activeCamera->getProjectionMatrix());
+		starDestroyerRenderer[i]->updateViewMatrix(activeCamera->getViewMatrix());
+		starDestroyerRenderer[i]->updateCameraLocation(activeCamera->getLocationMatrix());
 		starDestroyerRenderer[i]->updateModelMatrix(starDestroyerMesh->getModelMatrix());
 		starDestroyerMesh->addRenderer(starDestroyerRenderer[i]);
 		
@@ -183,9 +197,9 @@ int main(int argc, char **argv)
 	SkyBoxGLRenderer* skyBoxRenderer = new SkyBoxGLRenderer();
 	loadSkyBoxMesh(*skyBoxRenderer, "meshes/box.dae", "Textures/SkyBox/skyBoxUp.bmp", "Textures/SkyBox/skyBoxDown.bmp", "Textures/SkyBox/skyBoxLeft.bmp", "Textures/SkyBox/skyBoxRight.bmp", "Textures/SkyBox/skyBoxFront.bmp", "Textures/SkyBox/skyBoxBack.bmp");
 	skyBoxRenderer->addShader(skyBoxShader);
-	skyBoxRenderer->updateProjectionMatrix(shipCamera->getProjectionMatrix());
+	skyBoxRenderer->updateProjectionMatrix(activeCamera->getProjectionMatrix());
 
-	skyBoxRenderer->updateCameraRotation(shipCamera->getRotationMatrix());
+	skyBoxRenderer->updateCameraRotation(activeCamera->getRotationMatrix());
 	SkyBoxMesh* skyBoxMesh = new SkyBoxMesh();
 	skyBoxMesh->addRenderer(skyBoxRenderer);
 	skyBox->addComponent(skyBoxMesh);
@@ -195,10 +209,12 @@ int main(int argc, char **argv)
 	gameClock->start();
 	double timeLapse;
 	
+	int cameraCount = 0;
+	
 	while (1)
     {
 		timeLapse = gameClock->getTimeLapse();
-		shipCamera->update(timeLapse);
+		activeCamera->update(timeLapse);
 		moon->update(timeLapse);
 		skyBox->update(timeLapse);
 		spaceHunter->update(timeLapse);
@@ -304,6 +320,14 @@ int main(int argc, char **argv)
 						spaceHunter->roll(0);
 						spaceHunter->accelerate(0);
 					}
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_v))
+					{
+						
+						activeCamera->useSettings(*(cameraList.at(cameraCount)));
+						cameraCount += 1;
+						cameraCount %= cameraList.size();
+					}
+
 
 
 
