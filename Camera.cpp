@@ -35,6 +35,7 @@ Camera::Camera(const float& inNear, const float& inFar, const float& inFieldOfVi
 	fieldOfView = inFieldOfView;
 	width = inWidth;
 	height= inHeight;
+	activeCamera = false;
 	setupProjectionMatrix();
 	updateViewMatrix();
 }
@@ -57,45 +58,50 @@ void Camera::setup()
 
 
 
-void Camera::useSettings(const Camera& inCamera)
+void Camera::useSettings(Camera& inCamera)
 {
-	for(unsigned int i = 0; i < 16; i++)
-	{
-		projectionMatrix[i] = inCamera.projectionMatrix[i];
-	}
-	
-	for(unsigned int i = 0; i < 16; i++)
-	{
-		viewMatrix[i] = inCamera.viewMatrix[i];
-	}
-	
-	for(unsigned int i = 0; i < 3; i++)
-	{
-		locationVector[i] = inCamera.locationVector[i];
-	}
-	
-	for(unsigned int i = 0; i < 16; i++)
-	{
-		rotationMatrix[i] = inCamera.rotationMatrix[i];
-	}
-	position = inCamera.position;
-	rotation = inCamera.rotation;
-	near = inCamera.near;
-	far = inCamera.far;
-	fieldOfView = inCamera.fieldOfView;
-	width = inCamera.width;
-	height = inCamera.height;
-	setupProjectionMatrix();
-	updateViewMatrix();
+	activeCamera = true;
+	followCamera = &inCamera;
+	update(0);
 }
 	
 
 
 void Camera::update(double timeLapse)
 {
-	updateViewMatrix();
-	updateLocation();
-	updateRotation();
+	if(!activeCamera)
+	{
+		updateViewMatrix();
+		updateLocation();
+		updateRotation();
+	}
+	else
+	{
+		for(unsigned int i = 0; i < 16; i++)
+		{
+			projectionMatrix[i] = followCamera->projectionMatrix[i];
+		}
+		
+		for(unsigned int i = 0; i < 16; i++)
+		{
+			viewMatrix[i] = followCamera->viewMatrix[i];
+		}
+		
+		for(unsigned int i = 0; i < 3; i++)
+		{
+			locationVector[i] = followCamera->locationVector[i];
+		}
+		
+		for(unsigned int i = 0; i < 16; i++)
+		{
+			rotationMatrix[i] = followCamera->rotationMatrix[i];
+		}
+		near = followCamera->near;
+		far = followCamera->far;
+		fieldOfView = followCamera->fieldOfView;
+		width = followCamera->width;
+		height = followCamera->height;
+	}
 }
 
 

@@ -214,6 +214,8 @@ int main(int argc, char **argv)
 	while (1)
     {
 		timeLapse = gameClock->getTimeLapse();
+		shipCamera->update(timeLapse);
+		backCamera->update(timeLapse);
 		activeCamera->update(timeLapse);
 		moon->update(timeLapse);
 		skyBox->update(timeLapse);
