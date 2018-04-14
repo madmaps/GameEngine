@@ -149,6 +149,7 @@ void Camera::updateViewMatrix()
 {
 	glm::mat4 T = glm::translate(glm::mat4(1.0f),-position);
 	glm::mat4 R = glm::toMat4(rotation);
+	R = glm::inverse(R);
 	glm::mat4 view_mat = R * T;
 	float* tempViewMatrix = (float*)glm::value_ptr(view_mat);
 	for(unsigned int i = 0; i < 16; i++)
@@ -169,6 +170,7 @@ void Camera::updateLocation()
 void Camera::updateRotation()
 {
 	glm::mat4 R = glm::toMat4(rotation);
+	R = glm::inverse(R);
 	float* tempRotation = (float*)glm::value_ptr(R);
 	for(unsigned int i = 0; i < 16; i++)
 	{

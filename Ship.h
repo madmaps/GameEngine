@@ -1,6 +1,7 @@
 #ifndef __SHIP__
 #define __SHIP__
 #include "StandardObject.h"
+#include "Camera.h"
 
 class Ship : public StandardObject
 {
@@ -10,6 +11,11 @@ public:
 	void draw();
 	void update(double timeLapse);
 	void setup();
+	
+	void addCamera(Camera* inCamera,glm::vec3 inPosition, glm::quat inRotation);
+	
+	void addShip(Ship* inShip,glm::vec3 inPosition, glm::quat inRotation);
+
 	
 	void yaw(const float inYaw);
 	void pitch(const float inPitch);
@@ -29,6 +35,8 @@ protected:
 	void updatePitch(double timeLapse);
 	void updateRoll(double timeLapse);
 	void updateAcceleration(double timeLapse);
+	void updateCamera();
+	void updateShip(double inTimeLapse);
 
 
 	float desiredYaw;

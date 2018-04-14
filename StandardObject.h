@@ -2,13 +2,14 @@
 #define __STANDARDOBJECT__
 #include <vector>
 #include "Component.h"
-#include "ObjectSocket.h"
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/vec3.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
+
+class ObjectSocket;
 
 class StandardObject
 {

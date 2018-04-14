@@ -3,6 +3,7 @@
 #include "glm/vec3.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
+#include "StandardObject.h"
 
 class ObjectSocket
 {
@@ -14,9 +15,12 @@ public:
 	virtual void setRotation(const glm::quat& inRotation);
 	virtual glm::vec3 getPosition()const;
 	virtual glm::quat getRotation()const;
+	void setChildObject(StandardObject* inChildObject);
+	StandardObject* getChildObject()const;
 protected:
 	glm::vec3 position;
 	glm::quat rotation;
+	StandardObject* childObject;
 private:
 };
 #endif

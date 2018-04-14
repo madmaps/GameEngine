@@ -76,12 +76,15 @@ int main(int argc, char **argv)
     backCamera->setPosition(glm::vec3(0.0f, 0.0f, -90.0f));
     backCamera->setRotation(glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
     
+    Camera* spaceHunterCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
+        
     Camera* activeCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
     
     std::vector<Camera*> cameraList;
     
     cameraList.push_back(shipCamera);
     cameraList.push_back(backCamera);
+    cameraList.push_back(spaceHunterCamera);
     
     activeCamera->useSettings(*shipCamera);
     
@@ -172,22 +175,26 @@ int main(int argc, char **argv)
 		
 	}
 
+    Ship* anotherShip = new Ship();
+    anotherShip->addComponent(tieBomberMesh);
+    anotherShip->setPosition(glm::vec3(10.0f, 0.0f, -200.0f));
+    anotherShip->setRotation(glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+
 	
 	Ship* spaceHunter = new Ship();
     spaceHunter->addComponent(starDestroyerMesh);
-    spaceHunter->setPosition(glm::vec3(10.0f, 0.0f, -200.0f));
-    spaceHunter->setRotation(glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    spaceHunter->setPosition(glm::vec3(10.0f, -100.0f, -200.0f));
+    spaceHunter->setRotation(glm::angleAxis(glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
     spaceHunter->setYawSettings(1.0f, 0.75f);
     spaceHunter->setPitchSettings(1.0f, 0.75f);
     spaceHunter->setRollSettings(2.0f, 0.75f);
     spaceHunter->setAccelerationSettings(1.0f, 0.3f, 50.0f);
 
+    spaceHunter->addCamera(spaceHunterCamera, glm::vec3(0.0f, 100.0f, -20.0f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    spaceHunter->addShip(anotherShip, glm::vec3(0.0f, 100.0f, 0.0f), glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+
     
-    Ship* anotherShip = new Ship();
-    anotherShip->addComponent(tieBomberMesh);
-    anotherShip->setPosition(glm::vec3(10.0f, 0.0f, -200.0f));
-    anotherShip->setRotation(glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-    
+   
     Ship* candicesShip = new Ship();
     candicesShip->addComponent(tieBomberMesh);
     candicesShip->setPosition(glm::vec3(-10.0f, 0.0f, 20.0f));
@@ -220,7 +227,7 @@ int main(int argc, char **argv)
 		moon->update(timeLapse);
 		skyBox->update(timeLapse);
 		spaceHunter->update(timeLapse);
-		anotherShip->update(timeLapse);
+		//anotherShip->update(timeLapse);
 		candicesShip->update(timeLapse);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -275,11 +282,11 @@ int main(int argc, char **argv)
                     }
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_q))
                     {
-						shipCamera->setRotation(shipCamera->getRotation() * glm::angleAxis(glm::radians(-2.0f),glm::vec3(0.0f, 1.0f, 0.0f)));
+						shipCamera->setRotation(shipCamera->getRotation() * glm::angleAxis(glm::radians(-2.0f),glm::vec3(0.0f, 0.0f, 1.0f)));
                     }
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_e))
                     {
-						shipCamera->setRotation(shipCamera->getRotation() * glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 1.0f, 0.0f)));
+						shipCamera->setRotation(shipCamera->getRotation() * glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 0.0f, 1.0f)));
                     }
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_u))
 					{
@@ -299,11 +306,11 @@ int main(int argc, char **argv)
 					}
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_j))
 					{
-						spaceHunter->roll(1);
+						spaceHunter->roll(-1);
 					}
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_l))
 					{
-						spaceHunter->roll(-1);
+						spaceHunter->roll(1);
 					}
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_y))
 					{

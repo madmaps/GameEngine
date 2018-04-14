@@ -1,5 +1,6 @@
 #include "Ship.h"
 #include "StandardMesh.h"
+#include "ObjectSocket.h"
 
 Ship::Ship()
 {
@@ -46,12 +47,37 @@ void Ship::update(double timeLapse)
 	updatePitch(timeLapse);
 	updateRoll(timeLapse);
 	updateAcceleration(timeLapse);
+	if(sockets.size() > 0)
+	{
+		updateCamera();
+		updateShip(timeLapse);
+	}
 }
 
 void Ship::setup()
 {
 	
 }
+
+void Ship::addCamera(Camera* inCamera, glm::vec3 inPosition, glm::quat inRotation)
+{
+	ObjectSocket* cameraSocket = new ObjectSocket();
+	cameraSocket->setPosition(inPosition);
+	cameraSocket->setRotation(inRotation);
+	cameraSocket->setChildObject(inCamera);
+	sockets.push_back(cameraSocket);
+}
+
+void Ship::addShip(Ship* inShip, glm::vec3 inPosition, glm::quat inRotation)
+{
+	ObjectSocket* shipSocket = new ObjectSocket();
+	shipSocket->setPosition(inPosition);
+	shipSocket->setRotation(inRotation);
+	shipSocket->setChildObject(inShip);
+	sockets.push_back(shipSocket);
+}
+
+	
 
 void Ship::yaw(const float inYaw)
 {
@@ -135,3 +161,27 @@ void Ship::updateAcceleration(double timeLapse)
 	position +=  glm::toMat3(rotation) * movement;
 }
 
+void Ship::updateCamera()
+{
+	Camera* shipCamera = (Camera*)sockets.at(0)->getChildObject();
+	shipCamera->setRotation(rotation * sockets.at(0)->getRotation());
+	glm::mat3 shipRotMat = glm::toMat3(rotation);
+	shipCamera->setPosition(position + (shipRotMat * sockets.at(0)->getPosition()));
+	shipCamera->update(0);
+}
+
+void Ship::updateShip(double inTimeLapse)
+{
+	Ship* shipObject = (Ship*)sockets.at(1)->getChildObject();
+	shipObject->setRotation(rotation * sockets.at(1)->getRotation());
+	glm::mat3 shipRotMat = glm::toMat3(rotation);
+	shipObject->setPosition(position + (shipRotMat * sockets.at(1)->getPosition()));
+	shipObject->update(inTimeLapse);
+}
+
+ /*                       glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
+                        glm::vec3 movement = glm::vec3(-0.3f, 0.0f, 0.0f);
+                        glm::vec3 finalMovement = movement * camRotMat;
+                        shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
+
+*/

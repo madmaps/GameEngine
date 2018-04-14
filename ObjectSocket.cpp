@@ -14,6 +14,16 @@ ObjectSocket::~ObjectSocket()
 {
 }
 
+void ObjectSocket::setChildObject(StandardObject* inChildObject)
+{
+	childObject = inChildObject;
+}
+
+StandardObject* ObjectSocket::getChildObject()const
+{
+	return childObject;
+}
+
 void ObjectSocket::setPosition(const glm::vec3& inPosition)
 {
 	position = inPosition;
