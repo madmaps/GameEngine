@@ -190,7 +190,7 @@ int main(int argc, char **argv)
     spaceHunter->setRollSettings(2.0f, 0.75f);
     spaceHunter->setAccelerationSettings(1.0f, 0.3f, 50.0f);
 
-    spaceHunter->addCamera(spaceHunterCamera, glm::vec3(0.0f, 100.0f, -20.0f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    spaceHunter->addCamera(spaceHunterCamera, glm::vec3(0.0f, 100.0f, -80.0f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
     spaceHunter->addShip(anotherShip, glm::vec3(0.0f, 100.0f, 0.0f), glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 
     
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
                     {
                         glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
                         glm::vec3 movement = glm::vec3(0.0f, 0.0f, -0.3f);
-                        glm::vec3 finalMovement = movement * camRotMat;
+                        glm::vec3 finalMovement =  camRotMat * movement;
                         shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
                     }
                    
@@ -263,30 +263,30 @@ int main(int argc, char **argv)
                     {
                         glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
                         glm::vec3 movement = glm::vec3(0.0f, 0.0f, 0.3f);
-                        glm::vec3 finalMovement = movement * camRotMat;
+                        glm::vec3 finalMovement =  camRotMat * movement;
                         shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
                     } 
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_a))
                     {
                         glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
                         glm::vec3 movement = glm::vec3(-0.3f, 0.0f, 0.0f);
-                        glm::vec3 finalMovement = movement * camRotMat;
+                        glm::vec3 finalMovement =  camRotMat * movement;
                         shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
                     }
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_d))
                     {
                         glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
                         glm::vec3 movement = glm::vec3(0.3f, 0.0f, 0.0f);
-                        glm::vec3 finalMovement = movement * camRotMat;
+                        glm::vec3 finalMovement =  camRotMat * movement;
                         shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
                     }
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_q))
                     {
-						shipCamera->setRotation(shipCamera->getRotation() * glm::angleAxis(glm::radians(-2.0f),glm::vec3(0.0f, 0.0f, 1.0f)));
+						shipCamera->setRotation(glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 1.0f, 0.0f)) * shipCamera->getRotation());
                     }
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_e))
                     {
-						shipCamera->setRotation(shipCamera->getRotation() * glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 0.0f, 1.0f)));
+						shipCamera->setRotation(glm::angleAxis(glm::radians(-2.0f),glm::vec3(0.0f, 1.0f, 0.0f)) * shipCamera->getRotation());
                     }
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_u))
 					{
