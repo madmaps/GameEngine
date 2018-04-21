@@ -2,6 +2,8 @@
 #define __SHIP__
 #include "StandardObject.h"
 #include "Camera.h"
+#include "Mesh.h"
+#include "JoystickDevice.h"
 
 class Ship : public StandardObject
 {
@@ -12,10 +14,10 @@ public:
 	void update(double timeLapse);
 	void setup();
 	
+	void addMesh(Mesh* inMesh);
 	void addCamera(Camera* inCamera,glm::vec3 inPosition, glm::quat inRotation);
-	
-	void addShip(Ship* inShip,glm::vec3 inPosition, glm::quat inRotation);
-
+	void addJoystick(JoystickDevice* inJoystick);
+	void removeJoystick();
 	
 	void yaw(const float inYaw);
 	void pitch(const float inPitch);
@@ -37,6 +39,7 @@ protected:
 	void updateAcceleration(double timeLapse);
 	void updateCamera();
 	void updateShip(double inTimeLapse);
+	void updateInputDevices();
 
 
 	float desiredYaw;

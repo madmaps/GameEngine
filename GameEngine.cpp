@@ -9,6 +9,7 @@
 #include <X11/X.h> 
 #include <X11/keysym.h>
 #include <vector>
+#include <SDL2/SDL.h>
 
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -34,6 +35,7 @@
 #include "Camera.h"
 #include "Ship.h"
 #include "Timer.h"
+#include "SdlJoystickDevice.h"
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
@@ -61,32 +63,25 @@ int main(int argc, char **argv)
     glXMakeCurrent(dpy, win, cx);
     XMapWindow(dpy, win);
     
+    if(SDL_Init(SDL_INIT_JOYSTICK) < 0)
+    {
+		std::cout << "SDL Joystick Error" << std::endl;
+	}
+    
+    std::cout << "Number of Joysticks found: " << SDL_NumJoysticks() << std::endl;
+    SDL_Joystick* sdlJoystick;
+    SDL_JoystickEventState(SDL_ENABLE);
+    sdlJoystick = SDL_JoystickOpen(0);
+    SDL_Event sdlEvent;
+    
+    SdlJoystickDevice* joystick = new SdlJoystickDevice();
+    
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	
     GLuint shader_program = loadShaders("Shaders/NormalShader.vert","Shaders/NormalShader.frag");
     GLuint skyBoxShader = loadShaders("Shaders/SkyBoxShader.vert", "Shaders/SkyBoxShader.frag");
     
-    Camera* shipCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
-    shipCamera->setPosition(glm::vec3(0.0f, 0.0f, 90.0f));
-    shipCamera->setRotation(glm::angleAxis(0.0f,glm::vec3(0.0f, 0.0f, -1.0f)));
-    shipCamera->update(0);
-    
-    Camera* backCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
-    backCamera->setPosition(glm::vec3(0.0f, 0.0f, -90.0f));
-    backCamera->setRotation(glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-    
-    Camera* spaceHunterCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
-        
-    Camera* activeCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
-    
-    std::vector<Camera*> cameraList;
-    
-    cameraList.push_back(shipCamera);
-    cameraList.push_back(backCamera);
-    cameraList.push_back(spaceHunterCamera);
-    
-    activeCamera->useSettings(*shipCamera);
     
 	Assimp::Importer importer;
 
@@ -95,6 +90,8 @@ int main(int argc, char **argv)
 	{
 		std::cout << "BAD!";
 	}
+
+	Camera* activeCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
 
 	BumpMapGLRenderer* moonRenderer = new BumpMapGLRenderer();
 	loadNormalMesh(planetScene, *moonRenderer, 0, "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
@@ -174,31 +171,56 @@ int main(int argc, char **argv)
 		starDestroyerMesh->addRenderer(starDestroyerRenderer[i]);
 		
 	}
+	
+	Camera* anotherShipCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
 
     Ship* anotherShip = new Ship();
-    anotherShip->addComponent(tieBomberMesh);
+    anotherShip->addMesh(tieBomberMesh);
     anotherShip->setPosition(glm::vec3(10.0f, 0.0f, -200.0f));
     anotherShip->setRotation(glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    anotherShip->setYawSettings(0.5f, 0.85f);
+    anotherShip->setPitchSettings(1.0f, 0.85f);
+    anotherShip->setRollSettings(2.0f, 0.85f);
+    anotherShip->setAccelerationSettings(1.0f, 0.3f, 5.0f);
+    anotherShip->addCamera(anotherShipCamera, glm::vec3(0.0f, 0.0f, 0.0f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 
+	Camera* spaceHunterCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
 	
 	Ship* spaceHunter = new Ship();
-    spaceHunter->addComponent(starDestroyerMesh);
+    spaceHunter->addMesh(starDestroyerMesh);
     spaceHunter->setPosition(glm::vec3(10.0f, -100.0f, -200.0f));
     spaceHunter->setRotation(glm::angleAxis(glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-    spaceHunter->setYawSettings(1.0f, 0.75f);
-    spaceHunter->setPitchSettings(1.0f, 0.75f);
-    spaceHunter->setRollSettings(2.0f, 0.75f);
-    spaceHunter->setAccelerationSettings(1.0f, 0.3f, 50.0f);
-
+    spaceHunter->setYawSettings(0.01f, 0.75f);
+    spaceHunter->setPitchSettings(0.01f, 0.75f);
+    spaceHunter->setRollSettings(0.02f, 0.75f);
+    spaceHunter->setAccelerationSettings(1.0f, 0.3f, 5.0f);
     spaceHunter->addCamera(spaceHunterCamera, glm::vec3(0.0f, 100.0f, -80.0f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-    spaceHunter->addShip(anotherShip, glm::vec3(0.0f, 100.0f, 0.0f), glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-
-    
+    spaceHunter->addJoystick(joystick);
+   
+	Camera* candicesShipCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
    
     Ship* candicesShip = new Ship();
-    candicesShip->addComponent(tieBomberMesh);
+    candicesShip->addMesh(tieFighterMesh);
     candicesShip->setPosition(glm::vec3(-10.0f, 0.0f, 20.0f));
     candicesShip->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
+	candicesShip->setYawSettings(0.5f, 0.85f);
+    candicesShip->setPitchSettings(1.0f, 0.85f);
+    candicesShip->setRollSettings(2.0f, 0.85f);
+    candicesShip->setAccelerationSettings(1.0f, 0.3f, 5.0f);
+    candicesShip->addCamera(candicesShipCamera, glm::vec3(0.0f, 0.0f, 0.0f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+
+	std::vector<Ship*> shipList;
+	shipList.push_back(anotherShip);
+	shipList.push_back(spaceHunter);
+	shipList.push_back(candicesShip);
+	
+    std::vector<Camera*> cameraList;
+    
+    cameraList.push_back(anotherShipCamera);
+    cameraList.push_back(spaceHunterCamera);
+    cameraList.push_back(candicesShipCamera);
+    
+    activeCamera->useSettings(*spaceHunterCamera);
 	
 	SkyBox* skyBox = new SkyBox();
 	SkyBoxGLRenderer* skyBoxRenderer = new SkyBoxGLRenderer();
@@ -216,29 +238,37 @@ int main(int argc, char **argv)
 	gameClock->start();
 	double timeLapse;
 	
-	int cameraCount = 0;
+	int cameraCount = 1;
 	
 	while (1)
     {
 		timeLapse = gameClock->getTimeLapse();
-		shipCamera->update(timeLapse);
-		backCamera->update(timeLapse);
-		activeCamera->update(timeLapse);
+		
+		joystick->clearButtons();
+		while(SDL_PollEvent(&sdlEvent))
+		{
+			joystick->getEvent(sdlEvent);
+			joystick->poll();
+		}
+		
 		moon->update(timeLapse);
 		skyBox->update(timeLapse);
-		spaceHunter->update(timeLapse);
-		//anotherShip->update(timeLapse);
-		candicesShip->update(timeLapse);
-		
+		for(Ship* current : shipList)
+		{
+			current->update(timeLapse);
+		}
+		activeCamera->update(timeLapse);
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		skyBox->draw();
 		moon->draw();
-		spaceHunter->draw();
-		anotherShip->draw();
-		candicesShip->draw();
+		for(Ship* current : shipList)
+		{
+			current->draw();
+		}
 		glXSwapBuffers(dpy, win);
 		
-        while(XPending(dpy))
+		while(XPending(dpy))
         {
             XNextEvent(dpy, &event);
             switch (event.type)
@@ -251,96 +281,15 @@ int main(int argc, char **argv)
                     {
                         exit(0);
                     }
-                    if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_w))
-                    {
-                        glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
-                        glm::vec3 movement = glm::vec3(0.0f, 0.0f, -0.3f);
-                        glm::vec3 finalMovement =  camRotMat * movement;
-                        shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
-                    }
                    
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_s))
-                    {
-                        glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
-                        glm::vec3 movement = glm::vec3(0.0f, 0.0f, 0.3f);
-                        glm::vec3 finalMovement =  camRotMat * movement;
-                        shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
-                    } 
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_a))
-                    {
-                        glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
-                        glm::vec3 movement = glm::vec3(-0.3f, 0.0f, 0.0f);
-                        glm::vec3 finalMovement =  camRotMat * movement;
-                        shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
-                    }
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_d))
-                    {
-                        glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
-                        glm::vec3 movement = glm::vec3(0.3f, 0.0f, 0.0f);
-                        glm::vec3 finalMovement =  camRotMat * movement;
-                        shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
-                    }
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_q))
-                    {
-						shipCamera->setRotation(glm::angleAxis(glm::radians(2.0f),glm::vec3(0.0f, 1.0f, 0.0f)) * shipCamera->getRotation());
-                    }
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_e))
-                    {
-						shipCamera->setRotation(glm::angleAxis(glm::radians(-2.0f),glm::vec3(0.0f, 1.0f, 0.0f)) * shipCamera->getRotation());
-                    }
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_u))
-					{
-						spaceHunter->yaw(1);
-					}
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_o))
-					{
-						spaceHunter->yaw(-1);
-					}
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_i))
-					{
-						spaceHunter->pitch(1);
-					}
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_k))
-					{
-						spaceHunter->pitch(-1);
-					}
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_j))
-					{
-						spaceHunter->roll(-1);
-					}
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_l))
-					{
-						spaceHunter->roll(1);
-					}
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_y))
-					{
-						spaceHunter->accelerate(1);
-					}
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_n))
-					{
-						spaceHunter->accelerate(-1);
-					}
-
-
-					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_h))
-					{
-						spaceHunter->yaw(0);
-						spaceHunter->pitch(0);
-						spaceHunter->roll(0);
-						spaceHunter->accelerate(0);
-					}
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_v))
 					{
-						
 						activeCamera->useSettings(*(cameraList.at(cameraCount)));
+						shipList.at((cameraCount+cameraList.size()-1)%cameraList.size())->removeJoystick();
+						shipList.at(cameraCount)->addJoystick(joystick);
 						cameraCount += 1;
 						cameraCount %= cameraList.size();
 					}
-
-
-
-
-
                 }
 					break;
                 case ButtonPress:
@@ -349,6 +298,7 @@ int main(int argc, char **argv)
                     glViewport(0, 0, event.xconfigure.width, event.xconfigure.height);
                 case Expose:
                     break;
+                    
             }
         } 
 

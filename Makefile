@@ -2,16 +2,18 @@ CC=g++
 
 CFLAGS = -c -Wall -std=c++11
 
-LIBS = -lGL -lX11 -lassimp
+LIBS = -lGL -lX11 -lassimp -lSDL2
 
 all: GameEngine
 
 GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
 			BitMapHeader.o BmpLoader.o DibHeader.o LoadHelper.o SkyBoxGLRenderer.o ModelMesh.o StandardMesh.o \
-			Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o
+			Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o InputDevice.o \
+			JoystickDevice.o SdlJoystickDevice.o
 	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
 		  BitMapHeader.o BmpLoader.o DibHeader.o SkyBoxGLRenderer.o LoadHelper.o ModelMesh.o StandardMesh.o \
-		  Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o -o GameEngine $(LIBS)
+		  Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o  InputDevice.o \
+		  JoystickDevice.o SdlJoystickDevice.o $(LIBS) -o GameEngine 
 
 GameEngine.o: GameEngine.cpp
 	$(CC) $(CFLAGS) GameEngine.cpp 
@@ -72,6 +74,15 @@ Ship.o: Ship.cpp
 
 Timer.o: Timer.cpp
 	$(CC) $(CFLAGS) Timer.cpp
+	
+InputDevice.o: InputDevice.cpp
+	$(CC) $(CFLAGS) InputDevice.cpp
+	
+JoystickDevice.o: JoystickDevice.cpp
+	$(CC) $(CFLAGS) JoystickDevice.cpp
+	
+SdlJoystickDevice.o: SdlJoystickDevice.cpp
+	$(CC) $(CFLAGS) SdlJoystickDevice.cpp
 	
 clean:
 	rm -rf *.o core.* GameEngine

@@ -4,6 +4,10 @@
 
 Ship::Ship()
 {
+	for(unsigned int i = 0; i < 10; i++)
+	{
+		components.push_back(0);
+	}
 	desiredYaw = 0;
 	desiredPitch = 0;
 	desiredRoll = 0;
@@ -43,6 +47,10 @@ void Ship::draw()
 
 void Ship::update(double timeLapse)
 {
+	if(components.at(1) != 0)
+	{
+		updateInputDevices();
+	}
 	updateYaw(timeLapse);
 	updatePitch(timeLapse);
 	updateRoll(timeLapse);
@@ -50,13 +58,18 @@ void Ship::update(double timeLapse)
 	if(sockets.size() > 0)
 	{
 		updateCamera();
-		updateShip(timeLapse);
 	}
+
 }
 
 void Ship::setup()
 {
 	
+}
+
+void Ship::addMesh(Mesh* inMesh)
+{
+	components.at(0) = inMesh;
 }
 
 void Ship::addCamera(Camera* inCamera, glm::vec3 inPosition, glm::quat inRotation)
@@ -68,16 +81,16 @@ void Ship::addCamera(Camera* inCamera, glm::vec3 inPosition, glm::quat inRotatio
 	sockets.push_back(cameraSocket);
 }
 
-void Ship::addShip(Ship* inShip, glm::vec3 inPosition, glm::quat inRotation)
+void Ship::addJoystick(JoystickDevice* inJoystick)
 {
-	ObjectSocket* shipSocket = new ObjectSocket();
-	shipSocket->setPosition(inPosition);
-	shipSocket->setRotation(inRotation);
-	shipSocket->setChildObject(inShip);
-	sockets.push_back(shipSocket);
+	components.at(1) = inJoystick;
 }
 
-	
+void Ship::removeJoystick()
+{
+	components.at(1) = 0;
+}
+
 
 void Ship::yaw(const float inYaw)
 {
@@ -170,18 +183,15 @@ void Ship::updateCamera()
 	shipCamera->update(0);
 }
 
-void Ship::updateShip(double inTimeLapse)
+void Ship::updateInputDevices()
 {
-	Ship* shipObject = (Ship*)sockets.at(1)->getChildObject();
-	shipObject->setRotation(rotation * sockets.at(1)->getRotation());
-	glm::mat3 shipRotMat = glm::toMat3(rotation);
-	shipObject->setPosition(position + (shipRotMat * sockets.at(1)->getPosition()));
-	shipObject->update(inTimeLapse);
+	JoystickDevice* joystick = (JoystickDevice*)components.at(1);
+	roll(joystick->getAxis(0));
+	pitch(-joystick->getAxis(1));
+	accelerate(-joystick->getAxis(2));
+	yaw(-joystick->getAxis(3));
+	
 }
 
- /*                       glm::mat3 camRotMat = glm::toMat3(shipCamera->getRotation());
-                        glm::vec3 movement = glm::vec3(-0.3f, 0.0f, 0.0f);
-                        glm::vec3 finalMovement = movement * camRotMat;
-                        shipCamera->setPosition(shipCamera->getPosition() + finalMovement);
 
-*/
+
