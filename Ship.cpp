@@ -165,9 +165,9 @@ void Ship::updateAcceleration(double timeLapse)
 	{
 		speed = maxSpeed;
 	}
-	if(speed < -maxSpeed)
+	if(speed < 0)
 	{
-		speed = -maxSpeed;
+		speed = 0;
 	}
 	
 	glm::vec3 movement = glm::vec3(0.0f, 0.0f, (speed * (float)timeLapse));

@@ -15,7 +15,7 @@ void main()
 	gl_Position = proj * view * model * vec4(vertex_position,1.0);
 	texture_coordinates = vertex_text;
 
-	vec3 lightDirection_world = normalize(vec3(100.0, 0.0, 0.0) - cameraPosition_world);
+	vec3 lightDirection_world = normalize(vec3(-1000.0, -1000.0, 0.0) - vertex_position);
 	vec3 bitangent = cross(vertex_normal, vtangent.xyz) * vtangent.w;
 
 	vec3 cameraPosition_local = vec3(inverse(model) * vec4(cameraPosition_world,1.0));

@@ -10,6 +10,8 @@
 #include <X11/keysym.h>
 #include <vector>
 #include <SDL2/SDL.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -75,6 +77,26 @@ int main(int argc, char **argv)
     SDL_Event sdlEvent;
     
     SdlJoystickDevice* joystick = new SdlJoystickDevice();
+    
+    
+    
+    /*ALCdevice* device;
+    device = alcOpenDevice(NULL);
+    ALCcontext *context;
+    context = alcCreateContext(device, NULL);
+    alcMakeContextCurrent(context);
+    ALuint alBuffer;
+    alGenBuffers((ALuint)1, &alBuffer);
+    
+    ALsizei size, freq;
+    ALenum format;
+    ALvoid* data;
+    ALboolean loop = AL_FALSE;
+    
+    alutLoadWAVFile("test.wav", &format, &data, &size, &freq, &loop);*/
+    
+    
+    
     
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -243,6 +265,7 @@ int main(int argc, char **argv)
 	while (1)
     {
 		timeLapse = gameClock->getTimeLapse();
+		//std::cout << 1/timeLapse << std::endl;
 		
 		joystick->clearButtons();
 		while(SDL_PollEvent(&sdlEvent))
