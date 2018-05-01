@@ -2,7 +2,7 @@ CC=g++
 
 CFLAGS = -c -Wall -std=c++11
 
-LIBS = -lGL -lX11 -lassimp -lSDL2 -lopenal
+LIBS = -lGL -lX11 -lassimp -lSDL2 -lopenal -lalut
 
 all: GameEngine
 

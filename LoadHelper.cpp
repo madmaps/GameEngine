@@ -116,6 +116,134 @@ int loadNormalMesh(const aiScene* inScene, BumpMapGLRenderer& inRenderer,const i
 	return 1;
 }
 
+int loadNormalMeshLoopAll(const char* inSceneFile, StandardMesh* inMesh, Camera* inCamera, GLuint inShader, const int inNumberOfLoops, const char* inDefuse, const char* inNormal, const char* inSpecular, const char* inAmbient)
+{
+	    
+	Assimp::Importer importer;
+
+	const aiScene* inScene = importer.ReadFile(inSceneFile, aiProcess_CalcTangentSpace | aiProcess_Triangulate);
+	if(!inScene)
+	{
+		std::cout << "BAD!";
+	}
+
+	GLfloat* vertPoints = NULL;
+	GLfloat* normalPoints = NULL;
+	GLfloat* texturePoints = NULL;
+	GLfloat* tangentPoints = NULL;
+	BumpMapGLRenderer* inRenderer = new BumpMapGLRenderer[inNumberOfLoops];
+	
+	for(int j = 0; j < inNumberOfLoops; j++)
+	{
+		unsigned int pointCount = 0;
+		const aiMesh* mesh = inScene->mMeshes[j];
+		pointCount = mesh->mNumVertices;
+		if(mesh->HasPositions())
+		{
+			vertPoints = new GLfloat[pointCount * 3];
+			for(unsigned int i = 0;i < pointCount;i++)
+			{
+				const aiVector3D* vp = &(mesh->mVertices[i]);
+				vertPoints[i * 3 + 0] = (GLfloat)vp->x;
+				vertPoints[i * 3 + 1] = (GLfloat)vp->y;
+				vertPoints[i * 3 + 2] = (GLfloat)vp->z;
+			}
+		}
+		if(mesh->HasNormals())
+		{
+			normalPoints = new GLfloat[pointCount * 3];
+			for(unsigned int i = 0; i < pointCount; i++)
+			{
+				const aiVector3D* vn = &(mesh->mNormals[i]);
+				normalPoints[i * 3 + 0] = (GLfloat)vn->x;
+				normalPoints[i * 3 + 1] = (GLfloat)vn->y;
+				normalPoints[i * 3 + 2] = (GLfloat)vn->z;
+			}
+		}
+
+		if(mesh->HasTextureCoords(0))
+		{
+			texturePoints = new GLfloat[pointCount * 2];
+			for(unsigned int i = 0; i < pointCount; i++)
+			{
+				const aiVector3D* vt = &(mesh->mTextureCoords[0][i]);
+				texturePoints[i * 2 + 0] = (GLfloat)vt->x;
+				texturePoints[i * 2 + 1] = (GLfloat)vt->y;
+			}
+		}
+
+		if(mesh->HasTangentsAndBitangents())
+		{
+			tangentPoints = new GLfloat[pointCount * 4];
+			for(unsigned int i = 0; i < pointCount; i++)
+			{
+				const aiVector3D* vt = &(mesh->mTangents[i]);
+				const aiVector3D* vb = &(mesh->mBitangents[i]);
+				const aiVector3D* vn = &(mesh->mNormals[i]);
+				
+				glm::vec3 tangent = glm::vec3(vt->x,vt->y,vt->z);
+				glm::vec3 biTangent = glm::vec3(vb->x,vb->y,vb->z);
+				glm::vec3 normalVec = glm::vec3(vn->x,vn->y,vn->z);
+				
+				glm::vec3 tempTangent = glm::normalize(tangent - normalVec * glm::dot(normalVec,tangent));
+				float det = (glm::dot(glm::cross(normalVec,tangent),biTangent));
+				if(det < 0.0f)
+				{
+					det = -1.0f;
+				}
+				else
+				{
+					det = 1.0f;
+				}
+				tangentPoints[i * 4 + 0] = tempTangent.x;
+				tangentPoints[i * 4 + 1] = tempTangent.y;
+				tangentPoints[i * 4 + 2] = tempTangent.z;
+				tangentPoints[i * 4 + 3] = det;
+			}
+		}
+		inRenderer[j].setVertices(vertPoints, pointCount);
+		inRenderer[j].setNormals(normalPoints, pointCount);
+		inRenderer[j].setTextureCoordinates(texturePoints, pointCount);
+		inRenderer[j].setTangents(tangentPoints, pointCount);
+		delete [] vertPoints;
+		delete [] normalPoints;
+		delete [] texturePoints;
+		delete [] tangentPoints;
+		if(j == 0)
+		{
+			bmpLoader defuseFile;
+			bmpLoader normalFile;
+			bmpLoader specularFile;
+			bmpLoader ambientFile;
+			defuseFile.loadFile(inDefuse);
+			normalFile.loadFile(inNormal);
+			specularFile.loadFile(inSpecular);
+			ambientFile.loadFile(inAmbient);
+			inRenderer[j].setDiffuseTexture(defuseFile.getWidth(), defuseFile.getHeigth(), defuseFile.getData());
+			inRenderer[j].setNormalTexture(normalFile.getWidth(), normalFile.getHeigth(), normalFile.getData());
+			inRenderer[j].setSpecularTexture(specularFile.getWidth(), specularFile.getHeigth(), specularFile.getData());
+			inRenderer[j].setOcclusionTexture(ambientFile.getWidth(), ambientFile.getHeigth(), ambientFile.getData());
+		}
+		else
+		{
+			inRenderer[j].setDiffuseTexture(inRenderer[0].getDiffuseTexure());
+			inRenderer[j].setNormalTexture(inRenderer[0].getNormalTexture());
+			inRenderer[j].setSpecularTexture(inRenderer[0].getSpecularTexture());
+			inRenderer[j].setOcclusionTexture(inRenderer[0].getOcclusionTexture());
+		}
+		
+		inRenderer[j].addShader(inShader);
+		inRenderer[j].updateProjectionMatrix(inCamera->getProjectionMatrix());
+		inRenderer[j].updateViewMatrix(inCamera->getViewMatrix());
+		inRenderer[j].updateCameraLocation(inCamera->getLocationMatrix());
+		inRenderer[j].updateModelMatrix(inMesh->getModelMatrix());
+		inMesh->addRenderer(&inRenderer[j]);
+
+	}
+	return 1;
+}
+
+
 int loadSkyBoxMesh(SkyBoxGLRenderer& inRenderer, const char* inMeshFile, const char* inUp, const char* inDown, const char* inLeft, const char* inRight, const char* inFront, const char* inBack)
 {
 	Assimp::Importer importer;

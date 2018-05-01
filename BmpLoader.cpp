@@ -30,7 +30,7 @@ bmpLoader::~bmpLoader()
 	}
 	if(t_data!=NULL)
 	{
-		delete t_data;
+		delete[] t_data;
 		t_data=NULL;
 	}
 	if(startPosition!=NULL)

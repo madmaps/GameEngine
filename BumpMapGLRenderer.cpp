@@ -158,6 +158,47 @@ void BumpMapGLRenderer::setOcclusionTexture(const unsigned int inWidth,const uns
 	addTexture(3, inWidth, inHeight, inData);
 }
 
+void BumpMapGLRenderer::setDiffuseTexture(const GLuint inDiffuseTexture)
+{
+	textures[0] = inDiffuseTexture;
+}
+
+void BumpMapGLRenderer::setNormalTexture(const GLuint inNormalTexture)
+{
+	textures[1] = inNormalTexture;
+}
+
+void BumpMapGLRenderer::setSpecularTexture(const GLuint inSpecularTexture)
+{
+	textures[2] = inSpecularTexture;
+}
+
+void BumpMapGLRenderer::setOcclusionTexture(const GLuint inOcclusionTexture)
+{
+	textures[3] = inOcclusionTexture;
+}
+
+GLuint BumpMapGLRenderer::getDiffuseTexure()const
+{
+	return textures[0];
+}
+
+GLuint BumpMapGLRenderer::getNormalTexture()const
+{
+	return textures[1];
+}
+
+GLuint BumpMapGLRenderer::getSpecularTexture()const
+{
+	return textures[2];
+}
+
+GLuint BumpMapGLRenderer::getOcclusionTexture()const
+{
+	return textures[3];
+}
+
+
 
 void BumpMapGLRenderer::addPoints(const unsigned int inType, GLfloat* inPoints, const unsigned int inPointCount)
 {

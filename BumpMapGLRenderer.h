@@ -30,6 +30,16 @@ class BumpMapGLRenderer : public RenderTarget
 		void setNormalTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData);
 		void setSpecularTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData);
 		void setOcclusionTexture(const unsigned int inWidth,const unsigned int inHeight, unsigned char* inData);
+		void setDiffuseTexture(const GLuint inDiffuseTexture);
+		void setNormalTexture(const GLuint inNormalTexture);
+		void setSpecularTexture(const GLuint inSpecularTexture);
+		void setOcclusionTexture(const GLuint inOcclusionTexture);
+		
+		GLuint getDiffuseTexure()const;
+		GLuint getNormalTexture()const;
+		GLuint getSpecularTexture()const;
+		GLuint getOcclusionTexture()const;
+
 		
 	protected:
 		GLuint* textures;
