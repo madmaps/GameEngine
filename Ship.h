@@ -16,6 +16,7 @@ public:
 	
 	void addMesh(Mesh* inMesh);
 	void addCamera(Camera* inCamera,glm::vec3 inPosition, glm::quat inRotation);
+	Camera* getCamera()const;
 	void addJoystick(JoystickDevice* inJoystick);
 	void removeJoystick();
 	

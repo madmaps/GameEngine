@@ -1,6 +1,5 @@
 #include "ModelMesh.h"
 
-
 ModelMesh::ModelMesh()
 {
 	modelMatrix = new float[16];

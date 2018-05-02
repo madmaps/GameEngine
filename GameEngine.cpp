@@ -47,8 +47,8 @@ Window     win;
 
 int main(int argc, char **argv)
 {
-	//alutInit (&argc, argv);
-	XVisualInfo         *vi;
+    //alutInit (&argc, argv);
+    XVisualInfo         *vi;
     Colormap             cmap;
     XSetWindowAttributes swa;
     GLXContext           cx;
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     dpy = XOpenDisplay(NULL);
     vi = glXChooseVisual(dpy, DefaultScreen(dpy), dblBuf);
     cx = glXCreateContext(dpy, vi, None, GL_TRUE);
-	cmap = XCreateColormap(dpy, RootWindow(dpy, vi->screen), vi->visual, AllocNone);
+    cmap = XCreateColormap(dpy, RootWindow(dpy, vi->screen), vi->visual, AllocNone);
     swa.colormap = cmap;
     swa.border_pixel = 0;
     swa.event_mask = KeyPressMask | ExposureMask | ButtonPressMask | StructureNotifyMask;
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     if(SDL_Init(SDL_INIT_JOYSTICK) < 0)
     {
 		std::cout << "SDL Joystick Error" << std::endl;
-	}
+    }
     
     std::cout << "Number of Joysticks found: " << SDL_NumJoysticks() << std::endl;
     SDL_Joystick* sdlJoystick;
@@ -90,68 +90,66 @@ int main(int argc, char **argv)
     alGenBuffers((ALuint)1, &alBuffer);
     
 
-	alBuffer = alutCreateBufferFromFile("Sounds/test.wav");
+    alBuffer = alutCreateBufferFromFile("Sounds/test.wav");
 	
-	ALuint source;
-	alGenSources((ALuint)1, &source);
-	alSourcef(source, AL_PITCH, 1);
-	// check for errors
-	alSourcef(source, AL_GAIN, 1);
-	// check for errors
-	alSource3f(source, AL_POSITION, 0, 0, 0);
-	// check for errors
-	alSource3f(source, AL_VELOCITY, 0, 0, 0);
-	// check for errors
-	alSourcei(source, AL_LOOPING, AL_FALSE);
-	// check for errros
-	alSourcei(source, AL_BUFFER, alBuffer);
+    ALuint source;
+    alGenSources((ALuint)1, &source);
+    alSourcef(source, AL_PITCH, 1);
+    // check for errors
+    alSourcef(source, AL_GAIN, 1);
+    // check for errors
+    alSource3f(source, AL_POSITION, 0, 0, 0);
+    // check for errors
+    alSource3f(source, AL_VELOCITY, 0, 0, 0);
+    // check for errors
+    alSourcei(source, AL_LOOPING, AL_FALSE);
+    // check for errros
+    alSourcei(source, AL_BUFFER, alBuffer);
+    
+    ALfloat listenerOri[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
+    alListener3f(AL_POSITION, 0, 0, 1.0f);
+    // check for errors
+    alListener3f(AL_VELOCITY, 0, 0, 0);
+    // check for errors
+    alListenerfv(AL_ORIENTATION, listenerOri);
+    // check for errors
 	
-	ALfloat listenerOri[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
-
-	alListener3f(AL_POSITION, 0, 0, 1.0f);
-	// check for errors
-	alListener3f(AL_VELOCITY, 0, 0, 0);
-	// check for errors
-	alListenerfv(AL_ORIENTATION, listenerOri);
-	// check for errors
-	
-	ALCenum error;
-	error = alGetError();
-	if (error != AL_NO_ERROR)
-	{
-		std::cout << "ERROR!" << std::endl;
-	}*/
+    ALCenum error;
+    error = alGetError();
+    if (error != AL_NO_ERROR)
+    {
+    	std::cout << "ERROR!" << std::endl;
+    }*/
 	
     
     
     glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-	
+    glDepthFunc(GL_LESS);
+    
     GLuint shader_program = loadShaders("Shaders/NormalShader.vert","Shaders/NormalShader.frag");
     GLuint skyBoxShader = loadShaders("Shaders/SkyBoxShader.vert", "Shaders/SkyBoxShader.frag");
     
-	Camera* activeCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
+    Camera* activeCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
     
     StandardMesh* moonMesh = new StandardMesh();
     loadNormalMeshLoopAll("meshes/planet.dae", moonMesh, activeCamera, shader_program, 1, "Textures/moonDefuse.bmp", "Textures/moonNormal.bmp", "Textures/moonSpecular.bmp", "Textures/moonAmbient.bmp");
     
-	StandardMesh* tieBomberMesh = new StandardMesh();
+    StandardMesh* tieBomberMesh = new StandardMesh();
     loadNormalMeshLoopAll("meshes/tiebomber.dae", tieBomberMesh, activeCamera, shader_program, 9, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
 
-	StandardMesh* tieFighterMesh = new StandardMesh();
-	loadNormalMeshLoopAll("meshes/tiefighter.dae", tieFighterMesh, activeCamera, shader_program, 8, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
+    StandardMesh* tieFighterMesh = new StandardMesh();
+    loadNormalMeshLoopAll("meshes/tiefighter.dae", tieFighterMesh, activeCamera, shader_program, 8, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
 
-	StandardMesh* starDestroyerMesh = new StandardMesh();
-	loadNormalMeshLoopAll("meshes/stardestroyer.dae", starDestroyerMesh, activeCamera, shader_program, 56, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
+    StandardMesh* starDestroyerMesh = new StandardMesh();
+    loadNormalMeshLoopAll("meshes/stardestroyer.dae", starDestroyerMesh, activeCamera, shader_program, 56, "Textures/Ship/ShipDef.bmp", "Textures/Ship/ShipNormal.bmp", "Textures/Ship/ShipSpec.bmp", "Textures/Ship/ShipAmb.bmp");
 
 	
-	Planet* moon = new Planet();
+    Planet* moon = new Planet();
     moon->addComponent(moonMesh);
     moon->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     moon->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, -1.0f)));
 
-	Camera* anotherShipCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
-
+    Camera* anotherShipCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
     Ship* anotherShip = new Ship();
     anotherShip->addMesh(tieBomberMesh);
     anotherShip->setPosition(glm::vec3(10.0f, 0.0f, -200.0f));
@@ -162,9 +160,8 @@ int main(int argc, char **argv)
     anotherShip->setAccelerationSettings(1.0f, 0.3f, 5.0f);
     anotherShip->addCamera(anotherShipCamera, glm::vec3(0.0f, 0.0f, 0.0f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 
-	Camera* spaceHunterCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
-	
-	Ship* spaceHunter = new Ship();
+    Camera* spaceHunterCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
+    Ship* spaceHunter = new Ship();
     spaceHunter->addMesh(starDestroyerMesh);
     spaceHunter->setPosition(glm::vec3(10.0f, -100.0f, -200.0f));
     spaceHunter->setRotation(glm::angleAxis(glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
@@ -173,82 +170,80 @@ int main(int argc, char **argv)
     spaceHunter->setRollSettings(0.02f, 0.75f);
     spaceHunter->setAccelerationSettings(1.0f, 0.3f, 5.0f);
     spaceHunter->addCamera(spaceHunterCamera, glm::vec3(0.0f, 100.0f, -80.0f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-    spaceHunter->addJoystick(joystick);
    
-	Camera* candicesShipCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
-   
+    Camera* candicesShipCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
     Ship* candicesShip = new Ship();
     candicesShip->addMesh(tieFighterMesh);
     candicesShip->setPosition(glm::vec3(-10.0f, 0.0f, 20.0f));
     candicesShip->setRotation(glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
-	candicesShip->setYawSettings(0.5f, 0.95f);
+    candicesShip->setYawSettings(0.5f, 0.95f);
     candicesShip->setPitchSettings(2.0f, 0.95f);
     candicesShip->setRollSettings(5.0f, 0.95f);
     candicesShip->setAccelerationSettings(1.0f, 0.3f, 15.0f);
     candicesShip->addCamera(candicesShipCamera, glm::vec3(0.0f, 0.0f, -0.05f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
     candicesShip->addJoystick(joystick);
 
-	std::vector<Ship*> shipList;
-	shipList.push_back(anotherShip);
-	shipList.push_back(spaceHunter);
-	shipList.push_back(candicesShip);
+    std::vector<Ship*> shipList;
+    shipList.push_back(anotherShip);
+    shipList.push_back(spaceHunter);
+    shipList.push_back(candicesShip);
 	
-    std::vector<Camera*> cameraList;
+   /* std::vector<Camera*> cameraList;
     
     cameraList.push_back(anotherShipCamera);
     cameraList.push_back(spaceHunterCamera);
-    cameraList.push_back(candicesShipCamera);
+    cameraList.push_back(candicesShipCamera);*/
     
-    activeCamera->useSettings(*candicesShipCamera);
+    activeCamera->useSettings(*anotherShipCamera);
 	
-	SkyBox* skyBox = new SkyBox();
-	SkyBoxGLRenderer* skyBoxRenderer = new SkyBoxGLRenderer();
-	loadSkyBoxMesh(*skyBoxRenderer, "meshes/box.dae", "Textures/SkyBox/skyBoxUp.bmp", "Textures/SkyBox/skyBoxDown.bmp", "Textures/SkyBox/skyBoxLeft.bmp", "Textures/SkyBox/skyBoxRight.bmp", "Textures/SkyBox/skyBoxFront.bmp", "Textures/SkyBox/skyBoxBack.bmp");
-	skyBoxRenderer->addShader(skyBoxShader);
-	skyBoxRenderer->updateProjectionMatrix(activeCamera->getProjectionMatrix());
+    SkyBox* skyBox = new SkyBox();
+    SkyBoxGLRenderer* skyBoxRenderer = new SkyBoxGLRenderer();
+    loadSkyBoxMesh(*skyBoxRenderer, "meshes/box.dae", "Textures/SkyBox/skyBoxUp.bmp", "Textures/SkyBox/skyBoxDown.bmp", "Textures/SkyBox/skyBoxLeft.bmp", "Textures/SkyBox/skyBoxRight.bmp", "Textures/SkyBox/skyBoxFront.bmp", "Textures/SkyBox/skyBoxBack.bmp");
+    skyBoxRenderer->addShader(skyBoxShader);
+    skyBoxRenderer->updateProjectionMatrix(activeCamera->getProjectionMatrix());
 
-	skyBoxRenderer->updateCameraRotation(activeCamera->getRotationMatrix());
-	SkyBoxMesh* skyBoxMesh = new SkyBoxMesh();
-	skyBoxMesh->addRenderer(skyBoxRenderer);
-	skyBox->addComponent(skyBoxMesh);
+    skyBoxRenderer->updateCameraRotation(activeCamera->getRotationMatrix());
+    SkyBoxMesh* skyBoxMesh = new SkyBoxMesh();
+    skyBoxMesh->addRenderer(skyBoxRenderer);
+    skyBox->addComponent(skyBoxMesh);
 	
-	Timer* gameClock = new Timer();
+    Timer* gameClock = new Timer();
 	
-	gameClock->start();
-	double timeLapse;
+    gameClock->start();
+    double timeLapse;
 	
-	int cameraCount = 1;
-	
-	while (1)
+    int shipCount = 0;
+    
+    while (1)
     {
-		timeLapse = gameClock->getTimeLapse();
-		//std::cout << 1/timeLapse << std::endl;
+    	timeLapse = gameClock->getTimeLapse();
+    	//std::cout << 1/timeLapse << std::endl;
+    	
+    	joystick->clearButtons();
+    	while(SDL_PollEvent(&sdlEvent))
+    	{
+ 	    joystick->getEvent(sdlEvent);
+            joystick->poll();
+	}
 		
-		joystick->clearButtons();
-		while(SDL_PollEvent(&sdlEvent))
-		{
-			joystick->getEvent(sdlEvent);
-			joystick->poll();
-		}
-		
-		moon->update(timeLapse);
-		skyBox->update(timeLapse);
-		for(Ship* current : shipList)
-		{
-			current->update(timeLapse);
-		}
-		activeCamera->update(timeLapse);
+	moon->update(timeLapse);
+	skyBox->update(timeLapse);
+	for(Ship* current : shipList)
+	{
+	    current->update(timeLapse);
+	}
+	activeCamera->update(timeLapse);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		skyBox->draw();
-		moon->draw();
-		for(Ship* current : shipList)
-		{
-			current->draw();
-		}
-		glXSwapBuffers(dpy, win);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	skyBox->draw();
+	moon->draw();
+	for(Ship* current : shipList)
+	{
+	    current->draw();
+	}
+	glXSwapBuffers(dpy, win);
 		
-		while(XPending(dpy))
+	while(XPending(dpy))
         {
             XNextEvent(dpy, &event);
             switch (event.type)
@@ -266,11 +261,11 @@ int main(int argc, char **argv)
 						alcMakeContextCurrent(NULL);
 						alcDestroyContext(context);
 						alcCloseDevice(device);*/
-                        exit(0);
-                    }
-					/*if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_p))
-					{
-						alGetError();
+									exit(0);
+								}
+						/*if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_p))
+						{
+							alGetError();
 						alSourcePlay(source);
 						error = alGetError();
 						if (error != AL_NO_ERROR)
@@ -282,16 +277,16 @@ int main(int argc, char **argv)
 							std::cout << "No error" << std::endl;
 						}
 
-					}*/
+						}*/
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_v))
 					{
-						activeCamera->useSettings(*(cameraList.at(cameraCount)));
-						shipList.at((cameraCount+cameraList.size()-1)%cameraList.size())->removeJoystick();
-						shipList.at(cameraCount)->addJoystick(joystick);
-						cameraCount += 1;
-						cameraCount %= cameraList.size();
+						shipList.at(shipCount)->removeJoystick();
+						shipCount += 1;
+						shipCount %= shipList.size();
+						activeCamera->useSettings(*(shipList.at(shipCount))->getCamera());
+						shipList.at(shipCount)->addJoystick(joystick);
 					}
-                }
+				}
 					break;
                 case ButtonPress:
                     break;
@@ -306,7 +301,7 @@ int main(int argc, char **argv)
 
     }
 	
-	return 0;
+    return 0;
 }
 
 

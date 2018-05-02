@@ -240,6 +240,7 @@ int loadNormalMeshLoopAll(const char* inSceneFile, StandardMesh* inMesh, Camera*
 		inMesh->addRenderer(&inRenderer[j]);
 
 	}
+
 	return 1;
 }
 

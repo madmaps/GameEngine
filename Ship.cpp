@@ -81,6 +81,11 @@ void Ship::addCamera(Camera* inCamera, glm::vec3 inPosition, glm::quat inRotatio
 	sockets.push_back(cameraSocket);
 }
 
+Camera* Ship::getCamera()const
+{
+	return (Camera*)sockets.at(0)->getChildObject();
+}
+
 void Ship::addJoystick(JoystickDevice* inJoystick)
 {
 	components.at(1) = inJoystick;
