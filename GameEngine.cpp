@@ -10,9 +10,9 @@
 #include <X11/keysym.h>
 #include <vector>
 #include <SDL2/SDL.h>
-//#include <AL/al.h>
-//#include <AL/alc.h>
-//#include <AL/alut.h>
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alut.h>
 
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -47,7 +47,6 @@ Window     win;
 
 int main(int argc, char **argv)
 {
-    //alutInit (&argc, argv);
     XVisualInfo         *vi;
     Colormap             cmap;
     XSetWindowAttributes swa;
@@ -80,46 +79,33 @@ int main(int argc, char **argv)
     
     SdlJoystickDevice* joystick = new SdlJoystickDevice();
     
-    /*alGetError();
+    alGetError();
     ALCdevice* device;
     device = alcOpenDevice(NULL);
-    ALCcontext *context;
-    context = alcCreateContext(device, NULL);
-    alcMakeContextCurrent(context);
+	alutInit (&argc, argv);
     ALuint alBuffer;
     alGenBuffers((ALuint)1, &alBuffer);
-    
-
     alBuffer = alutCreateBufferFromFile("Sounds/test.wav");
-	
     ALuint source;
     alGenSources((ALuint)1, &source);
     alSourcef(source, AL_PITCH, 1);
-    // check for errors
     alSourcef(source, AL_GAIN, 1);
-    // check for errors
     alSource3f(source, AL_POSITION, 0, 0, 0);
-    // check for errors
     alSource3f(source, AL_VELOCITY, 0, 0, 0);
-    // check for errors
     alSourcei(source, AL_LOOPING, AL_FALSE);
-    // check for errros
     alSourcei(source, AL_BUFFER, alBuffer);
     
     ALfloat listenerOri[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
     alListener3f(AL_POSITION, 0, 0, 1.0f);
-    // check for errors
     alListener3f(AL_VELOCITY, 0, 0, 0);
-    // check for errors
     alListenerfv(AL_ORIENTATION, listenerOri);
-    // check for errors
 	
     ALCenum error;
     error = alGetError();
     if (error != AL_NO_ERROR)
     {
     	std::cout << "ERROR!" << std::endl;
-    }*/
+    }
 	
     
     
@@ -188,12 +174,7 @@ int main(int argc, char **argv)
     shipList.push_back(spaceHunter);
     shipList.push_back(candicesShip);
 	
-   /* std::vector<Camera*> cameraList;
-    
-    cameraList.push_back(anotherShipCamera);
-    cameraList.push_back(spaceHunterCamera);
-    cameraList.push_back(candicesShipCamera);*/
-    
+ 
     activeCamera->useSettings(*anotherShipCamera);
 	
     SkyBox* skyBox = new SkyBox();
@@ -255,29 +236,22 @@ int main(int argc, char **argv)
                     if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_Escape))
                     {
 						SDL_JoystickClose(sdlJoystick);
-						/*alDeleteSources(1, &source);
+						alDeleteSources(1, &source);
 						alDeleteBuffers(1, &alBuffer);
-						device = alcGetContextsDevice(context);
-						alcMakeContextCurrent(NULL);
-						alcDestroyContext(context);
-						alcCloseDevice(device);*/
+						//device = alcGetContextsDevice(context);
+						//alcMakeContextCurrent(NULL);
+						//alcDestroyContext(context);
+						alutExit();
+						alcCloseDevice(device);
 									exit(0);
-								}
-						/*if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_p))
-						{
-							alGetError();
+					}
+					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_p))
+					{
+						alGetError();
 						alSourcePlay(source);
 						error = alGetError();
-						if (error != AL_NO_ERROR)
-						{
-							std::cout << "ERROR!" << std::endl;
-						}
-						else
-						{
-							std::cout << "No error" << std::endl;
-						}
 
-						}*/
+					}
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_v))
 					{
 						shipList.at(shipCount)->removeJoystick();
