@@ -39,6 +39,7 @@
 #include "Ship.h"
 #include "Timer.h"
 #include "SdlJoystickDevice.h"
+#include "OpenALSound.h"
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
@@ -66,49 +67,7 @@ int main(int argc, char **argv)
     glXMakeCurrent(dpy, win, cx);
     XMapWindow(dpy, win);
     
-    if(SDL_Init(SDL_INIT_JOYSTICK) < 0)
-    {
-		std::cout << "SDL Joystick Error" << std::endl;
-    }
-    
-    std::cout << "Number of Joysticks found: " << SDL_NumJoysticks() << std::endl;
-    SDL_Joystick* sdlJoystick;
-    SDL_JoystickEventState(SDL_ENABLE);
-    sdlJoystick = SDL_JoystickOpen(0);
-    SDL_Event sdlEvent;
-    
-    SdlJoystickDevice* joystick = new SdlJoystickDevice();
-    
-    alGetError();
-    ALCdevice* device;
-    device = alcOpenDevice(NULL);
-	alutInit (&argc, argv);
-    ALuint alBuffer;
-    alGenBuffers((ALuint)1, &alBuffer);
-    alBuffer = alutCreateBufferFromFile("Sounds/test.wav");
-    ALuint source;
-    alGenSources((ALuint)1, &source);
-    alSourcef(source, AL_PITCH, 1);
-    alSourcef(source, AL_GAIN, 1);
-    alSource3f(source, AL_POSITION, 0, 0, 0);
-    alSource3f(source, AL_VELOCITY, 0, 0, 0);
-    alSourcei(source, AL_LOOPING, AL_FALSE);
-    alSourcei(source, AL_BUFFER, alBuffer);
-    
-    ALfloat listenerOri[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
-    alListener3f(AL_POSITION, 0, 0, 1.0f);
-    alListener3f(AL_VELOCITY, 0, 0, 0);
-    alListenerfv(AL_ORIENTATION, listenerOri);
-	
-    ALCenum error;
-    error = alGetError();
-    if (error != AL_NO_ERROR)
-    {
-    	std::cout << "ERROR!" << std::endl;
-    }
-	
-    
-    
+  
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     
@@ -167,7 +126,6 @@ int main(int argc, char **argv)
     candicesShip->setRollSettings(5.0f, 0.95f);
     candicesShip->setAccelerationSettings(1.0f, 0.3f, 15.0f);
     candicesShip->addCamera(candicesShipCamera, glm::vec3(0.0f, 0.0f, -0.05f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-    candicesShip->addJoystick(joystick);
 
     std::vector<Ship*> shipList;
     shipList.push_back(anotherShip);
@@ -187,6 +145,47 @@ int main(int argc, char **argv)
     SkyBoxMesh* skyBoxMesh = new SkyBoxMesh();
     skyBoxMesh->addRenderer(skyBoxRenderer);
     skyBox->addComponent(skyBoxMesh);
+    
+	alutInit(NULL, NULL);
+    alGetError();
+    ALuint alBuffer;
+    alBuffer = alutCreateBufferFromFile("Sounds/test.wav");
+    ALuint source;
+    alGenSources((ALuint)1, &source);
+    alSourcef(source, AL_PITCH, 1);
+    alSourcef(source, AL_GAIN, 1);
+    alSource3f(source, AL_POSITION, 0, 0, 0);
+    alSource3f(source, AL_VELOCITY, 0, 0, 0);
+    alSourcei(source, AL_LOOPING, AL_FALSE);
+    alSourcei(source, AL_BUFFER, alBuffer);
+    
+    ALfloat listenerOri[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
+    alListener3f(AL_POSITION, 0, 0, 1.0f);
+    alListener3f(AL_VELOCITY, 0, 0, 0);
+    alListenerfv(AL_ORIENTATION, listenerOri);
+	
+    ALCenum error;
+    error = alGetError();
+    if (error != AL_NO_ERROR)
+    {
+    	std::cout << "ERROR!" << std::endl;
+    }
+    
+	if(SDL_Init(SDL_INIT_JOYSTICK) < 0)
+    {
+		std::cout << "SDL Joystick Error" << std::endl;
+    }
+    
+    std::cout << "Number of Joysticks found: " << SDL_NumJoysticks() << std::endl;
+    SDL_Joystick* sdlJoystick;
+    SDL_JoystickEventState(SDL_ENABLE);
+    sdlJoystick = SDL_JoystickOpen(0);
+    SDL_Event sdlEvent;
+    
+    SdlJoystickDevice* joystick = new SdlJoystickDevice();
+	candicesShip->addJoystick(joystick);
+
+
 	
     Timer* gameClock = new Timer();
 	
@@ -197,34 +196,35 @@ int main(int argc, char **argv)
     
     while (1)
     {
+
     	timeLapse = gameClock->getTimeLapse();
     	//std::cout << 1/timeLapse << std::endl;
     	
     	joystick->clearButtons();
     	while(SDL_PollEvent(&sdlEvent))
     	{
- 	    joystick->getEvent(sdlEvent);
+			joystick->getEvent(sdlEvent);
             joystick->poll();
-	}
+		}
 		
-	moon->update(timeLapse);
-	skyBox->update(timeLapse);
-	for(Ship* current : shipList)
-	{
-	    current->update(timeLapse);
-	}
-	activeCamera->update(timeLapse);
+		moon->update(timeLapse);
+		skyBox->update(timeLapse);
+		for(Ship* current : shipList)
+		{
+			current->update(timeLapse);
+		}
+		activeCamera->update(timeLapse);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	skyBox->draw();
-	moon->draw();
-	for(Ship* current : shipList)
-	{
-	    current->draw();
-	}
-	glXSwapBuffers(dpy, win);
-		
-	while(XPending(dpy))
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		skyBox->draw();
+		moon->draw();
+		for(Ship* current : shipList)
+		{
+			current->draw();
+		}
+		glXSwapBuffers(dpy, win);
+
+		while(XPending(dpy))
         {
             XNextEvent(dpy, &event);
             switch (event.type)
@@ -242,7 +242,7 @@ int main(int argc, char **argv)
 						//alcMakeContextCurrent(NULL);
 						//alcDestroyContext(context);
 						alutExit();
-						alcCloseDevice(device);
+						//alcCloseDevice(device);
 									exit(0);
 					}
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_p))

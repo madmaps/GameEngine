@@ -9,11 +9,11 @@ all: GameEngine
 GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
 			BitMapHeader.o BmpLoader.o DibHeader.o LoadHelper.o SkyBoxGLRenderer.o ModelMesh.o StandardMesh.o \
 			Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o InputDevice.o \
-			JoystickDevice.o SdlJoystickDevice.o
+			JoystickDevice.o SdlJoystickDevice.o SoundDevice.o ThreeDimSound.o OpenALSound.o
 	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
 		  BitMapHeader.o BmpLoader.o DibHeader.o SkyBoxGLRenderer.o LoadHelper.o ModelMesh.o StandardMesh.o \
 		  Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o  InputDevice.o \
-		  JoystickDevice.o SdlJoystickDevice.o $(LIBS) -o GameEngine 
+		  JoystickDevice.o SdlJoystickDevice.o SoundDevice.o ThreeDimSound.o OpenALSound.o $(LIBS) -o GameEngine 
 
 GameEngine.o: GameEngine.cpp
 	$(CC) $(CFLAGS) GameEngine.cpp 
@@ -83,6 +83,15 @@ JoystickDevice.o: JoystickDevice.cpp
 	
 SdlJoystickDevice.o: SdlJoystickDevice.cpp
 	$(CC) $(CFLAGS) SdlJoystickDevice.cpp
+	
+SoundDevice.o: SoundDevice.cpp
+	$(CC) $(CFLAGS) SoundDevice.cpp
+	
+ThreeDimSound.o: ThreeDimSound.cpp
+	$(CC) $(CFLAGS) ThreeDimSound.cpp
+
+OpenALSound.o: OpenALSound.cpp
+	$(CC) $(CFLAGS) OpenALSound.cpp
 	
 clean:
 	rm -rf *.o core.* GameEngine

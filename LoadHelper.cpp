@@ -28,7 +28,6 @@ int loadNormalMesh(const aiScene* inScene, BumpMapGLRenderer& inRenderer,const i
 	pointCount = mesh->mNumVertices;
 	if(mesh->HasPositions())
 	{
-		//std::cout << "Has positions" << std::endl;
 		vertPoints = new GLfloat[pointCount * 3];
 		for(unsigned int i = 0;i < pointCount;i++)
 		{
@@ -40,7 +39,6 @@ int loadNormalMesh(const aiScene* inScene, BumpMapGLRenderer& inRenderer,const i
 	}
 	if(mesh->HasNormals())
 	{
-		//std::cout << "Has normals" << std::endl;
 		normalPoints = new GLfloat[pointCount * 3];
 		for(unsigned int i = 0; i < pointCount; i++)
 		{
@@ -53,7 +51,6 @@ int loadNormalMesh(const aiScene* inScene, BumpMapGLRenderer& inRenderer,const i
 
 	if(mesh->HasTextureCoords(0))
 	{
-		//std::cout << "Has texture coordinates" << std::endl;
 		texturePoints = new GLfloat[pointCount * 2];
 		for(unsigned int i = 0; i < pointCount; i++)
 		{
@@ -65,7 +62,6 @@ int loadNormalMesh(const aiScene* inScene, BumpMapGLRenderer& inRenderer,const i
 
 	if(mesh->HasTangentsAndBitangents())
 	{
-		//std::cout << "Has tangents" << std::endl;
 		tangentPoints = new GLfloat[pointCount * 4];
 		for(unsigned int i = 0; i < pointCount; i++)
 		{
@@ -93,8 +89,6 @@ int loadNormalMesh(const aiScene* inScene, BumpMapGLRenderer& inRenderer,const i
 			tangentPoints[i * 4 + 3] = det;
 		}
 	}
-	
-	//aiReleaseImport(scene);
 	
 	bmpLoader defuseFile;
 	bmpLoader normalFile;
@@ -259,7 +253,6 @@ int loadSkyBoxMesh(SkyBoxGLRenderer& inRenderer, const char* inMeshFile, const c
 	unsigned int pointCount = mesh->mNumVertices;
 	if(mesh->HasPositions())
 	{
-		std::cout << "Has positions" << std::endl;
 		vertPoints = new GLfloat[pointCount * 3];
 		for(unsigned int i = 0; i < pointCount; i++)
 		{
