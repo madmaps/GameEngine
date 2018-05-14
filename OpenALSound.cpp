@@ -4,10 +4,11 @@
 OpenALSound::OpenALSound(unsigned int inNumberOfVoices)
 {
     numberOfVoices = inNumberOfVoices;
-    sources = new ALuint[inNumberOfVoices];
+    ALuint tempSource;
     for(unsigned int i = 0; i < inNumberOfVoices; i++)
     {
-        alGenSources((ALuint)1, &sources[i]);
+        alGenSources((ALuint)1, &tempSource);
+        sources.push_back(tempSource);
     }
     for(unsigned int i = 0; i < 16; i++)
     {
@@ -17,7 +18,6 @@ OpenALSound::OpenALSound(unsigned int inNumberOfVoices)
 
 OpenALSound::~OpenALSound()
 {
-    delete[] sources;
 }
 
 void OpenALSound::setup()
@@ -28,12 +28,39 @@ void OpenALSound::update(double TimeLapse)
 {
 }
 
-void OpenALSound::playSound(unsigned int inSoundIndex)
+int OpenALSound::playSound(unsigned int inSoundIndex)
 {
+    ALuint tempSource = 0;
+    ALuint sourceState = 0;
+    std::list<ALuint>::iterator iter;
+    for(std::list<ALuint>::iterator completeSource = usedSources.begin(); completeSource != usedSources.end(); completeSource++)
+    {
+        alSourcei(*completeSource,AL_SOURCE_STATE,sourceState);
+        if(sourceState == AL_STOPPED)
+        {
+            sources.push_back(*completeSource);
+            completeSource = usedSources.erase(completeSource);
+        }
+    }
+    if(sources.size() > 0)
+    {
+        tempSource = sources.back();
+        usedSources.push_back(tempSource);
+        sources.pop_back();
+        alSourcef(tempSource, AL_PITCH, 1);
+        alSourcef(tempSource, AL_GAIN, 1);
+        alSource3f(tempSource, AL_POSITION, position.x, position.y, position.z);
+        alSource3f(tempSource, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+        alSourcei(tempSource, AL_LOOPING, AL_FALSE);
+        alSourcei(tempSource, AL_BUFFER, soundBuffers.at(inSoundIndex));
+        alSourcePlay(tempSource);
+    }
+    return tempSource;
 }
 
-void OpenALSound::playSoundLoop(unsigned int inSoundIndex)
+int OpenALSound::playSoundLoop(unsigned int inSoundIndex)
 {
+    return 1;
 }
 
 bool OpenALSound::isSoundDonePlaying()

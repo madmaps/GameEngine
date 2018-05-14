@@ -1,6 +1,7 @@
 #ifndef __OPENALSOUND__
 #define __OPENALSOUND__
 #include <vector>
+#include <list>
 #include <AL/al.h>
 #include <AL/alc.h>
 #include "ThreeDimSound.h"
@@ -15,8 +16,8 @@ class OpenALSound : public ThreeDimSound
         virtual void setup();
 		virtual void update(double TimeLapse);
         
-        virtual void playSound(unsigned int inSoundIndex);
-        virtual void playSoundLoop(unsigned int inSoundIndex);
+        virtual int playSound(unsigned int inSoundIndex);
+        virtual int playSoundLoop(unsigned int inSoundIndex);
         virtual bool isSoundDonePlaying();
         virtual void stopPlayingSound(unsigned int inSoundIndex);
         virtual void setGain(unsigned int inSoundIndex);
@@ -30,7 +31,10 @@ class OpenALSound : public ThreeDimSound
         void addBuffer(ALuint inSoundBuffer,unsigned int inIndex);
 	protected:
         std::vector<ALuint> soundBuffers;
-        ALuint* sources;
+        std::list<ALuint> sources;
+        std::list<ALuint> usedSources;
+        glm::vec3 position;
+        glm::vec3 velocity;
         unsigned int numberOfVoices;
 	private:
 };

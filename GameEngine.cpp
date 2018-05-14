@@ -183,7 +183,7 @@ int main(int argc, char **argv)
     SDL_Event sdlEvent;
     
     SdlJoystickDevice* joystick = new SdlJoystickDevice();
-	candicesShip->addJoystick(joystick);
+	anotherShip->addJoystick(joystick);
 
 
 	
