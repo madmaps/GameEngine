@@ -16,11 +16,11 @@ class OpenALSound : public ThreeDimSound
         virtual void setup();
 		virtual void update(double TimeLapse);
         
-        virtual int playSound(unsigned int inSoundIndex);
-        virtual int playSoundLoop(unsigned int inSoundIndex);
-        virtual bool isSoundDonePlaying();
+        virtual unsigned int playSound(unsigned int inSoundIndex);
+        virtual unsigned int playSoundLoop(unsigned int inSoundIndex);
+        virtual bool isSoundDonePlaying(unsigned int inSoundIndex);
         virtual void stopPlayingSound(unsigned int inSoundIndex);
-        virtual void setGain(unsigned int inSoundIndex);
+        virtual void setGain(unsigned int inSoundIndex, const float inGain);
         
         virtual void setPosition(const glm::vec3& inPosition);
         virtual void setVelocity(const glm::vec3& inVelocity);
@@ -33,8 +33,6 @@ class OpenALSound : public ThreeDimSound
         std::vector<ALuint> soundBuffers;
         std::list<ALuint> sources;
         std::list<ALuint> usedSources;
-        glm::vec3 position;
-        glm::vec3 velocity;
         unsigned int numberOfVoices;
 	private:
 };

@@ -7,11 +7,11 @@ class SoundDevice : public Component
 	public:
 		SoundDevice();
 		~SoundDevice();
-        virtual int playSound(unsigned int inSoundIndex) = 0;
-        virtual int playSoundLoop(unsigned int inSoundIndex) = 0;
-        virtual bool isSoundDonePlaying() = 0;
+        virtual unsigned int playSound(unsigned int inSoundIndex) = 0;
+        virtual unsigned int playSoundLoop(unsigned int inSoundIndex) = 0;
+        virtual bool isSoundDonePlaying(unsigned int inSoundIndex) = 0;
         virtual void stopPlayingSound(unsigned int inSoundIndex) = 0;
-        virtual void setGain(unsigned int inSoundIndex) = 0;
+        virtual void setGain(unsigned int inSoundIndex,const float inGain) = 0;
 	protected:
 	private:
 };
