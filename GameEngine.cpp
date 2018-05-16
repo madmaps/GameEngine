@@ -150,7 +150,13 @@ int main(int argc, char **argv)
     alGetError();
     ALuint alBuffer;
     alBuffer = alutCreateBufferFromFile("Sounds/test.wav");
-    ALuint source;
+    OpenALSound* soundDevice = new OpenALSound(8);
+    soundDevice->addBuffer(alBuffer,0);
+    OpenALSound* listener = new OpenALSound(8);
+    listener->setUpdateListener(true);
+    
+    candicesShip->addSoundDevice(soundDevice);
+    /*ALuint source;
     alGenSources((ALuint)1, &source);
     alSourcef(source, AL_PITCH, 1);
     alSourcef(source, AL_GAIN, 1);
@@ -169,7 +175,7 @@ int main(int argc, char **argv)
     if (error != AL_NO_ERROR)
     {
     	std::cout << "ERROR!" << std::endl;
-    }
+    }*/
     
 	if(SDL_Init(SDL_INIT_JOYSTICK) < 0)
     {
@@ -236,7 +242,7 @@ int main(int argc, char **argv)
                     if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_Escape))
                     {
 						SDL_JoystickClose(sdlJoystick);
-						alDeleteSources(1, &source);
+						//alDeleteSources(1, &source);
 						alDeleteBuffers(1, &alBuffer);
 						//device = alcGetContextsDevice(context);
 						//alcMakeContextCurrent(NULL);
@@ -247,9 +253,10 @@ int main(int argc, char **argv)
 					}
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_p))
 					{
-						alGetError();
+						/*alGetError();
 						alSourcePlay(source);
-						error = alGetError();
+						error = alGetError();*/
+						candicesShip->fireWeapon();
 
 					}
 					if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_v))

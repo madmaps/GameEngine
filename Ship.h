@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "JoystickDevice.h"
+#include "ThreeDimSound.h"
 
 class Ship : public StandardObject
 {
@@ -19,12 +20,15 @@ public:
 	Camera* getCamera()const;
 	void addJoystick(JoystickDevice* inJoystick);
 	void removeJoystick();
+	void addSoundDevice(ThreeDimSound* inSoundDevice);
 	
 	void yaw(const float inYaw);
 	void pitch(const float inPitch);
 	void roll(const float inRoll);
 	
 	void accelerate(const float inAcceleration);
+	
+	void fireWeapon();
 	
 	void setYawSettings(const float inMaxYaw, const float inRateOfYaw);
 	void setPitchSettings(const float inMaxPitch, const float inRateOfPitch);
@@ -41,6 +45,7 @@ protected:
 	void updateCamera();
 	void updateShip(double inTimeLapse);
 	void updateInputDevices();
+	void updateSound();
 
 
 	float desiredYaw;

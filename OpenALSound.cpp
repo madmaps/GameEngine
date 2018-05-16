@@ -1,4 +1,5 @@
 #include "OpenALSound.h"
+#include <iostream>
 
 
 OpenALSound::OpenALSound(unsigned int inNumberOfVoices)
@@ -52,7 +53,6 @@ unsigned int OpenALSound::playSound(unsigned int inSoundIndex)
 {
     ALuint tempSource = 0;
     ALuint sourceState = 0;
-    std::list<ALuint>::iterator iter;
     for(std::list<ALuint>::iterator completeSource = usedSources.begin(); completeSource != usedSources.end(); completeSource++)
     {
         alSourcei(*completeSource,AL_SOURCE_STATE,sourceState);
@@ -74,6 +74,7 @@ unsigned int OpenALSound::playSound(unsigned int inSoundIndex)
         alSourcei(tempSource, AL_LOOPING, AL_FALSE);
         alSourcei(tempSource, AL_BUFFER, soundBuffers.at(inSoundIndex));
         alSourcePlay(tempSource);
+        std::cout << "Playing Sound: " << tempSource << std::endl;
     }
     return tempSource;
 }
@@ -82,7 +83,6 @@ unsigned int OpenALSound::playSoundLoop(unsigned int inSoundIndex)
 {
     ALuint tempSource = 0;
     ALuint sourceState = 0;
-    std::list<ALuint>::iterator iter;
     for(std::list<ALuint>::iterator completeSource = usedSources.begin(); completeSource != usedSources.end(); completeSource++)
     {
         alSourcei(*completeSource,AL_SOURCE_STATE,sourceState);

@@ -51,6 +51,10 @@ void Ship::update(double timeLapse)
 	{
 		updateInputDevices();
 	}
+	if(components.at(2) != 0)
+	{
+		updateSound();
+	}
 	updateYaw(timeLapse);
 	updatePitch(timeLapse);
 	updateRoll(timeLapse);
@@ -96,6 +100,11 @@ void Ship::removeJoystick()
 	components.at(1) = 0;
 }
 
+void Ship::addSoundDevice(ThreeDimSound* inSoundDevice)
+{
+	components.at(2) = inSoundDevice;
+}
+
 
 void Ship::yaw(const float inYaw)
 {
@@ -115,6 +124,15 @@ void Ship::roll(const float inRoll)
 void Ship::accelerate(const float inAcceleration)
 {
 	desiredAcceleration = inAcceleration * maxAcceleration;
+}
+
+void Ship::fireWeapon()
+{
+	if(components.at(2) != 0)
+	{
+		ThreeDimSound* soundDevice = (ThreeDimSound*)components.at(2);
+		soundDevice->playSound(0);
+	}
 }
 
 
@@ -196,6 +214,17 @@ void Ship::updateInputDevices()
 	accelerate(-joystick->getAxis(2));
 	yaw(-joystick->getAxis(3));
 	
+}
+
+void Ship::updateSound()
+{
+	ThreeDimSound* soundDevice = (ThreeDimSound*)components.at(2);
+	soundDevice->setPosition(position);
+	glm::vec3 velocity = glm::vec3(0.0f, 0.0f, -speed);
+	glm::mat3 shipRotMat = glm::toMat3(rotation);
+	velocity = shipRotMat * velocity;
+	soundDevice->setVelocity(velocity);
+	soundDevice->update(0);
 }
 
 
