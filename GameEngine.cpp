@@ -148,11 +148,13 @@ int main(int argc, char **argv)
     
 	alutInit(NULL, NULL);
     alGetError();
+    alDopplerFactor(5);
     ALuint alBuffer;
     alBuffer = alutCreateBufferFromFile("Sounds/test.wav");
-    OpenALSound* soundDevice = new OpenALSound(8);
+    OpenALSound* soundDevice = new OpenALSound();
     soundDevice->addBuffer(alBuffer,0);
-    OpenALSound* listener = new OpenALSound(8);
+    soundDevice->setRolloffRate(0.1f);
+    OpenALSound* listener = new OpenALSound();
     listener->setUpdateListener(true);
     
     candicesShip->addSoundDevice(soundDevice);

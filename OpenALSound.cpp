@@ -2,8 +2,9 @@
 #include <iostream>
 
 
-OpenALSound::OpenALSound(unsigned int inNumberOfVoices)
+OpenALSound::OpenALSound(unsigned int inNumberOfBuffers, unsigned int inNumberOfVoices)
 {
+    rolloffRate = 1.0f;
     numberOfVoices = inNumberOfVoices;
     ALuint tempSource;
     for(unsigned int i = 0; i < inNumberOfVoices; i++)
@@ -11,7 +12,7 @@ OpenALSound::OpenALSound(unsigned int inNumberOfVoices)
         alGenSources((ALuint)1, &tempSource);
         sources.push_back(tempSource);
     }
-    for(unsigned int i = 0; i < 16; i++)
+    for(unsigned int i = 0; i < inNumberOfBuffers; i++)
     {
         soundBuffers.push_back(0);
     }
@@ -19,6 +20,14 @@ OpenALSound::OpenALSound(unsigned int inNumberOfVoices)
 
 OpenALSound::~OpenALSound()
 {
+    for(std::list<ALuint>::iterator completeSource = usedSources.begin(); completeSource != usedSources.end(); completeSource++)
+    {
+        alDeleteSources(1, &(*completeSource));
+    }
+    for(std::list<ALuint>::iterator unusedSources = sources.begin(); unusedSources != sources.end(); unusedSources++)
+    {
+        alDeleteSources(1, &(*unusedSources));
+    }
 }
 
 void OpenALSound::setup()
@@ -27,7 +36,6 @@ void OpenALSound::setup()
 
 void OpenALSound::update(double TimeLapse)
 {
-    std::list<ALuint>::iterator iter;
     for(std::list<ALuint>::iterator completeSource = usedSources.begin(); completeSource != usedSources.end(); completeSource++)
     {
         alSource3f(*completeSource, AL_POSITION, position.x, position.y, position.z);
@@ -52,10 +60,10 @@ void OpenALSound::update(double TimeLapse)
 unsigned int OpenALSound::playSound(unsigned int inSoundIndex)
 {
     ALuint tempSource = 0;
-    ALuint sourceState = 0;
+    ALint sourceState = 0;
     for(std::list<ALuint>::iterator completeSource = usedSources.begin(); completeSource != usedSources.end(); completeSource++)
     {
-        alSourcei(*completeSource,AL_SOURCE_STATE,sourceState);
+        alGetSourcei(*completeSource,AL_SOURCE_STATE,&sourceState);
         if(sourceState == AL_STOPPED)
         {
             sources.push_back(*completeSource);
@@ -71,10 +79,10 @@ unsigned int OpenALSound::playSound(unsigned int inSoundIndex)
         alSourcef(tempSource, AL_GAIN, 1);
         alSource3f(tempSource, AL_POSITION, position.x, position.y, position.z);
         alSource3f(tempSource, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+        alSourcef(tempSource, AL_ROLLOFF_FACTOR, rolloffRate);
         alSourcei(tempSource, AL_LOOPING, AL_FALSE);
         alSourcei(tempSource, AL_BUFFER, soundBuffers.at(inSoundIndex));
         alSourcePlay(tempSource);
-        std::cout << "Playing Sound: " << tempSource << std::endl;
     }
     return tempSource;
 }
@@ -82,10 +90,10 @@ unsigned int OpenALSound::playSound(unsigned int inSoundIndex)
 unsigned int OpenALSound::playSoundLoop(unsigned int inSoundIndex)
 {
     ALuint tempSource = 0;
-    ALuint sourceState = 0;
+    ALint sourceState = 0;
     for(std::list<ALuint>::iterator completeSource = usedSources.begin(); completeSource != usedSources.end(); completeSource++)
     {
-        alSourcei(*completeSource,AL_SOURCE_STATE,sourceState);
+        alGetSourcei(*completeSource,AL_SOURCE_STATE,&sourceState);
         if(sourceState == AL_STOPPED)
         {
             sources.push_back(*completeSource);
@@ -111,13 +119,13 @@ unsigned int OpenALSound::playSoundLoop(unsigned int inSoundIndex)
 bool OpenALSound::isSoundDonePlaying(unsigned int inSoundIndex)
 {
     bool returnValue = true;
-    ALuint sourceState = 0;
+    ALint sourceState = 0;
     std::list<ALuint>::iterator iter;
     for(std::list<ALuint>::iterator completeSource = usedSources.begin(); completeSource != usedSources.end(); completeSource++)
     {
         if(inSoundIndex == *completeSource)
         {
-            alSourcei(*completeSource,AL_SOURCE_STATE,sourceState);
+            alGetSourcei(*completeSource,AL_SOURCE_STATE,&sourceState);
             if(sourceState == AL_PLAYING)
             {
                 returnValue = false;
@@ -166,6 +174,11 @@ void OpenALSound::setListenerOrientation(const glm::vec3& inForwardVector,const 
 void OpenALSound::addBuffer(ALuint inSoundBuffer,unsigned int inIndex)
 {
     soundBuffers.at(inIndex) = inSoundBuffer;
+}
+
+void OpenALSound::setRolloffRate(const float inRolloffRate)
+{
+    rolloffRate = inRolloffRate;
 }
 
 
