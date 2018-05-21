@@ -1,6 +1,6 @@
 CC=g++
 
-CFLAGS = -c -Wall -std=c++11
+CFLAGS = -c -Wall -std=c++11 -g
 
 LIBS = -lGL -lX11 -lassimp -lSDL2 -lopenal -lalut
 
@@ -9,11 +9,13 @@ all: GameEngine
 GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
 			BitMapHeader.o BmpLoader.o DibHeader.o LoadHelper.o SkyBoxGLRenderer.o ModelMesh.o StandardMesh.o \
 			Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o InputDevice.o \
-			JoystickDevice.o SdlJoystickDevice.o SoundDevice.o ThreeDimSound.o OpenALSound.o
+			JoystickDevice.o SdlJoystickDevice.o SoundDevice.o ThreeDimSound.o OpenALSound.o \
+			Widgets.o WidgetWindow.o
 	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
 		  BitMapHeader.o BmpLoader.o DibHeader.o SkyBoxGLRenderer.o LoadHelper.o ModelMesh.o StandardMesh.o \
 		  Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o  InputDevice.o \
-		  JoystickDevice.o SdlJoystickDevice.o SoundDevice.o ThreeDimSound.o OpenALSound.o $(LIBS) -o GameEngine 
+		  JoystickDevice.o SdlJoystickDevice.o SoundDevice.o ThreeDimSound.o OpenALSound.o \
+		  Widgets.o WidgetWindow.o $(LIBS) -o GameEngine 
 
 GameEngine.o: GameEngine.cpp
 	$(CC) $(CFLAGS) GameEngine.cpp 
@@ -92,6 +94,12 @@ ThreeDimSound.o: ThreeDimSound.cpp
 
 OpenALSound.o: OpenALSound.cpp
 	$(CC) $(CFLAGS) OpenALSound.cpp
+	
+Widgets.o: Widgets.cpp
+	$(CC) $(CFLAGS) Widgets.cpp
+	
+WidgetWindow.o: WidgetWindow.cpp
+	$(CC) $(CFLAGS) WidgetWindow.cpp
 	
 clean:
 	rm -rf *.o core.* GameEngine

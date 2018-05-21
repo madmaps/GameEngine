@@ -40,6 +40,7 @@
 #include "Timer.h"
 #include "SdlJoystickDevice.h"
 #include "OpenALSound.h"
+#include "WidgetWindow.h"
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
@@ -244,7 +245,6 @@ int main(int argc, char **argv)
                     if((XLookupString((XKeyEvent *)&event, buffer, 1, &keysym, NULL) == 1) && (keysym == (KeySym)XK_Escape))
                     {
 						SDL_JoystickClose(sdlJoystick);
-						//alDeleteSources(1, &source);
 						alDeleteBuffers(1, &alBuffer);
 						//device = alcGetContextsDevice(context);
 						//alcMakeContextCurrent(NULL);
