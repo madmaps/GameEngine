@@ -40,7 +40,8 @@
 #include "Timer.h"
 #include "SdlJoystickDevice.h"
 #include "OpenALSound.h"
-#include "WidgetWindow.h"
+#include "TextGLRenderer.h"
+
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
@@ -74,6 +75,7 @@ int main(int argc, char **argv)
     
     GLuint shader_program = loadShaders("Shaders/NormalShader.vert","Shaders/NormalShader.frag");
     GLuint skyBoxShader = loadShaders("Shaders/SkyBoxShader.vert", "Shaders/SkyBoxShader.frag");
+    GLuint textShader = loadShaders("Shaders/TextShader.vert", "Shaders/TextShader.frag");
     
     Camera* activeCamera = new Camera(0.1f, 1000.0f, 67.0f, 1920, 1080);
     
@@ -127,6 +129,35 @@ int main(int argc, char **argv)
     candicesShip->setRollSettings(5.0f, 0.95f);
     candicesShip->setAccelerationSettings(1.0f, 0.3f, 15.0f);
     candicesShip->addCamera(candicesShipCamera, glm::vec3(0.0f, 0.0f, -0.05f), glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    
+    
+    
+    TextGLRenderer* textRenderer = new TextGLRenderer();
+    
+    glm::mat4 ident = glm::mat4(1.0f);
+    glm::vec2 topLeft = glm::vec2(0.0833333f, 0.0f);
+    glm::vec2 bottomRight = glm::vec2(0.1666666f, 0.125f);
+    
+    float* textSize = new float[2];
+    textSize[0] = 0.25f; 
+    textSize[1] = 0.5f;
+    
+    glm::vec3 textColor = glm::vec3(1.0f, 0.0f, 1.0f);
+    
+    bmpLoader textTexture;
+    textTexture.loadFile("Textures/Text/asciiTable2.bmp");
+    
+    textRenderer->addShader(textShader);
+    textRenderer->updateModelMatrix((float*)glm::value_ptr(ident));
+    textRenderer->updateTextureCoordinates((float*)glm::value_ptr(topLeft),(float*)glm::value_ptr(bottomRight));
+    textRenderer->updateSize(textSize);
+    textRenderer->updateColor((float*)glm::value_ptr(textColor));
+    textRenderer->setTextTexture(textTexture.getWidth(),textTexture.getHeigth(),textTexture.getData());
+    
+    
+    
+    
+    
 
     std::vector<Ship*> shipList;
     shipList.push_back(anotherShip);
@@ -231,6 +262,7 @@ int main(int argc, char **argv)
 		{
 			current->draw();
 		}
+		textRenderer->draw();
 		glXSwapBuffers(dpy, win);
 
 		while(XPending(dpy))
