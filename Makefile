@@ -10,12 +10,12 @@ GameEngine: GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o Bump
 			BitMapHeader.o BmpLoader.o DibHeader.o LoadHelper.o SkyBoxGLRenderer.o ModelMesh.o StandardMesh.o \
 			Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o InputDevice.o \
 			JoystickDevice.o SdlJoystickDevice.o SoundDevice.o ThreeDimSound.o OpenALSound.o \
-			Widgets.o WidgetWindow.o TextGLRenderer.o
+			Widgets.o WidgetWindow.o TextRenderer.o TextGLRenderer.o TextWidget.o
 	$(CC) GameEngine.o Component.o StandardObject.o Mesh.o RenderTarget.o BumpMapGLRenderer.o \
 		  BitMapHeader.o BmpLoader.o DibHeader.o SkyBoxGLRenderer.o LoadHelper.o ModelMesh.o StandardMesh.o \
 		  Planet.o SkyBox.o SkyBoxMesh.o ObjectSocket.o Camera.o Ship.o Timer.o  InputDevice.o \
 		  JoystickDevice.o SdlJoystickDevice.o SoundDevice.o ThreeDimSound.o OpenALSound.o \
-		  Widgets.o WidgetWindow.o TextGLRenderer.o $(LIBS) -o GameEngine 
+		  Widgets.o WidgetWindow.o TextRenderer.o TextGLRenderer.o TextWidget.o $(LIBS) -o GameEngine 
 
 GameEngine.o: GameEngine.cpp
 	$(CC) $(CFLAGS) GameEngine.cpp 
@@ -100,9 +100,15 @@ Widgets.o: Widgets.cpp
 	
 WidgetWindow.o: WidgetWindow.cpp
 	$(CC) $(CFLAGS) WidgetWindow.cpp
+
+TextRenderer.o: TextRenderer.cpp
+	$(CC) $(CFLAGS) TextRenderer.cpp
 	
 TextGLRenderer.o: TextGLRenderer.cpp
 	$(CC) $(CFLAGS) TextGLRenderer.cpp
+	
+TextWidget.o: TextWidget.cpp
+	$(CC) $(CFLAGS) TextWidget.cpp
 	
 clean:
 	rm -rf *.o core.* GameEngine

@@ -59,26 +59,6 @@ void TextGLRenderer::addShader(GLuint inShader)
     glUniform1i(uniformLocations[5],0);
 }
 
-void TextGLRenderer::updateModelMatrix(float* inModelMatrix)
-{
-    modelMatrix = inModelMatrix;
-}
-
-void TextGLRenderer::updateTextureCoordinates(float* inTopLeft,float* inBottomRight)
-{
-    topLeft = inTopLeft;
-    bottomRight = inBottomRight;
-}
-
-void TextGLRenderer::updateSize(float* inSize)
-{
-    textSize = inSize;
-}
-
-void TextGLRenderer::updateColor(float* inColor)
-{
-    color = inColor;
-}
 
 void TextGLRenderer::setTextTexture(const unsigned int inWidth, const unsigned int inHeight, unsigned char* inData)
 {
@@ -120,17 +100,3 @@ void TextGLRenderer::addPoints(const unsigned int inType, GLfloat* inPoints, con
 	glBufferData(GL_ARRAY_BUFFER, inPointCount * 2 * sizeof(GLfloat),inPoints,GL_STATIC_DRAW);  
 
 }
-
-
-/*protected:
-GLuint* textures;
-GLuint* vbos;
-GLuint vao;
-GLuint shader;
-GLuint* uniformLocations;
-float* modelMatrix;
-float* topLeft;
-float* bottomRight;
-float* color;
-unsigned char vaoStatus;
-unsigned int numberOfVertices;*/
