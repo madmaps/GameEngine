@@ -19,8 +19,13 @@ class TextWidget : public Widgets
 		virtual void draw();
 		virtual void update(double inTimeStamp);
         virtual void setup();
+        virtual void animate(double);
         
         void setText(std::string inText);
+        
+        void setTextSize(const glm::vec2 inTextSize);
+        void setTextColor(const glm::vec3 inTextColor);
+        void setTextAlignment(const unsigned int inTextAlignment);
         
 	protected:
         TextRenderer* renderer;
@@ -29,22 +34,9 @@ class TextWidget : public Widgets
         glm::vec2 topLeft;
         glm::vec2 bottomRight;
         glm::vec3 textColor;
-        float aspectRatio;
-        float textHeight;
-        int screenWidth;
-        int screenHeight;
+        glm::vec2 textSize;
+        unsigned int textAlignment;
 	private:
 };
 #endif
 
-/*
- *     glm::mat4 ident = glm::mat4(1.0f);
-    glm::vec2 topLeft = glm::vec2(0.0833333f, 0.0f);
-    glm::vec2 bottomRight = glm::vec2(0.1666666f, 0.125f);
-    
-    float* textSize = new float[2];
-    textSize[0] = 0.25f; 
-    textSize[1] = 0.5f;
-    
-    glm::vec3 textColor = glm::vec3(1.0f, 0.0f, 1.0f);
-*/

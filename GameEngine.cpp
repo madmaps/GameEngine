@@ -41,6 +41,7 @@
 #include "SdlJoystickDevice.h"
 #include "OpenALSound.h"
 #include "TextGLRenderer.h"
+#include "TextWidget.h"
 
 
 static int dblBuf[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
@@ -133,28 +134,21 @@ int main(int argc, char **argv)
     
     
     TextGLRenderer* textRenderer = new TextGLRenderer();
-    
-    glm::mat4 ident = glm::mat4(1.0f);
-    glm::vec2 topLeft = glm::vec2(0.0833333f, 0.0f);
-    glm::vec2 bottomRight = glm::vec2(0.1666666f, 0.125f);
-    
-    float* textSize = new float[2];
-    textSize[0] = 0.25f; 
-    textSize[1] = 0.5f;
-    
-    glm::vec3 textColor = glm::vec3(1.0f, 0.0f, 1.0f);
-    
     bmpLoader textTexture;
     textTexture.loadFile("Textures/Text/asciiTable2.bmp");
     
     textRenderer->addShader(textShader);
-    textRenderer->updateModelMatrix((float*)glm::value_ptr(ident));
-    textRenderer->updateTextureCoordinates((float*)glm::value_ptr(topLeft),(float*)glm::value_ptr(bottomRight));
-    textRenderer->updateSize(textSize);
-    textRenderer->updateColor((float*)glm::value_ptr(textColor));
     textRenderer->setTextTexture(textTexture.getWidth(),textTexture.getHeigth(),textTexture.getData());
     
+	int screenDimensionX = 1920;
+	int screenDimensionY = 1080;
     
+    TextWidget* framesPerSecond = new TextWidget();
+    framesPerSecond->addRenderer(textRenderer);
+    framesPerSecond->setText(std::string("Hi Lumpy, I love you!"));
+    framesPerSecond->setTextColor(glm::vec3(0.482352941f, 0.831372549f, 0.145098039f));
+    framesPerSecond->setTextAlignment(2);
+    framesPerSecond->setScreenDim(&screenDimensionX, &screenDimensionY);
     
     
     
@@ -262,7 +256,8 @@ int main(int argc, char **argv)
 		{
 			current->draw();
 		}
-		textRenderer->draw();
+		framesPerSecond->draw();
+		//textRenderer->draw();
 		glXSwapBuffers(dpy, win);
 
 		while(XPending(dpy))

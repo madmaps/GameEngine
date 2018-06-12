@@ -13,8 +13,13 @@ class Widgets : public StandardObject
         
         virtual void animate(const double inTime) = 0;
         
+        void setScreenDim(int* inScreenWidth, int* inScreenHeight);
+        
         void setActive(const bool inActive);
         void setVisible(const bool inVisible);
+        
+        void setLocation(const glm::vec2 inLocation);
+        void setSize(const glm::vec2 inSize);
         
         bool getActive()const;
         bool getVisible()const;
@@ -25,6 +30,8 @@ class Widgets : public StandardObject
         std::vector<Widgets*> widgets;
         bool isActive;
         bool isVisible;
+        int* screenWidth;
+        int* screenHeight;
         
 	private:
 };
