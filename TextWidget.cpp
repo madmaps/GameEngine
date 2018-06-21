@@ -32,6 +32,8 @@ void TextWidget::draw()
 {
     int currentChar = 0;
     glm::mat4 translationMatrix = glm::mat4(1.0f);
+    rotation = glm::angleAxis(glm::radians(0.0f),glm::vec3(0.0f,0.0f,1.0f));
+	rotation *= glm::angleAxis(glm::radians(rotationAngle),glm::vec3(0.0f, 0.0f, 1.0f));
     float xOffset = (location.x / (float)(*screenWidth)) * 2 - 1;
     float yOffset = (location.y / (float)(*screenHeight)) * 2 - 1;
     double offset = 0;
@@ -58,7 +60,8 @@ void TextWidget::draw()
         
         translationMatrix[3][0] = xOffset + offset + (1.666 * size.x * i);
         translationMatrix[3][1] = yOffset;
-        modelMatrix = translationMatrix;
+        glm::mat4 rotationMatrix = glm::toMat4(rotation);
+        modelMatrix = rotationMatrix * translationMatrix;
         topLeft = glm::vec2(textPositionX * 0.0833333f, textPositionY *  0.125);
         bottomRight = glm::vec2((textPositionX + 1) * 0.0833333f, (textPositionY + 1) * 0.125f);
 

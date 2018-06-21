@@ -18,8 +18,10 @@ class Widgets : public StandardObject
         void setActive(const bool inActive);
         void setVisible(const bool inVisible);
         
+        
         void setLocation(const glm::vec2 inLocation);
         void setSize(const glm::vec2 inSize);
+        void rotate(const float inDegrees);
         
         bool getActive()const;
         bool getVisible()const;
@@ -32,6 +34,7 @@ class Widgets : public StandardObject
         bool isVisible;
         int* screenWidth;
         int* screenHeight;
+        float rotationAngle;
         
 	private:
 };

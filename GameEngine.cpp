@@ -148,8 +148,9 @@ int main(int argc, char **argv)
     framesPerSecond->setTextColor(glm::vec3(0.482352941f, 0.831372549f, 0.145098039f));
     framesPerSecond->setTextAlignment(1);
     framesPerSecond->setScreenDim(&screenDimensionX, &screenDimensionY);
-    framesPerSecond->setLocation(glm::vec2(screenDimensionX-75,screenDimensionY-25));
-    framesPerSecond->setSize(glm::vec2(10,14));
+    framesPerSecond->setLocation(glm::vec2(screenDimensionX/2,screenDimensionY/2));
+    framesPerSecond->setSize(glm::vec2(24,24));
+    framesPerSecond->rotate(180.0f);
     
     
     

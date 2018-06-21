@@ -56,5 +56,11 @@ bool Widgets::getVisible()const
 {
     return isVisible;
 }
+
+void Widgets::rotate(const float inDegrees)
+{
+    rotationAngle = inDegrees;
+}
+
         
 
