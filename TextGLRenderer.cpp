@@ -33,6 +33,7 @@ TextGLRenderer::~TextGLRenderer()
 
 void TextGLRenderer::draw()
 {
+    glDepthMask(GL_FALSE);
     glUseProgram(shader);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
@@ -43,6 +44,8 @@ void TextGLRenderer::draw()
     glUniform3fv(uniformLocations[4], 1, color);
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDepthMask(GL_TRUE);
+
 }
 
 void TextGLRenderer::addShader(GLuint inShader)

@@ -145,10 +145,11 @@ int main(int argc, char **argv)
     
     TextWidget* framesPerSecond = new TextWidget();
     framesPerSecond->addRenderer(textRenderer);
-    framesPerSecond->setText(std::string("Hi Lumpy, I love you!"));
     framesPerSecond->setTextColor(glm::vec3(0.482352941f, 0.831372549f, 0.145098039f));
-    framesPerSecond->setTextAlignment(2);
+    framesPerSecond->setTextAlignment(1);
     framesPerSecond->setScreenDim(&screenDimensionX, &screenDimensionY);
+    framesPerSecond->setLocation(glm::vec2(screenDimensionX-75,screenDimensionY-25));
+    framesPerSecond->setSize(glm::vec2(10,14));
     
     
     
@@ -227,12 +228,15 @@ int main(int argc, char **argv)
     double timeLapse;
 	
     int shipCount = 0;
+    std::string fps;
     
     while (1)
     {
 
     	timeLapse = gameClock->getTimeLapse();
     	//std::cout << 1/timeLapse << std::endl;
+    	fps = std::to_string(1/timeLapse);
+    	framesPerSecond->setText(fps);
     	
     	joystick->clearButtons();
     	while(SDL_PollEvent(&sdlEvent))
@@ -257,7 +261,6 @@ int main(int argc, char **argv)
 			current->draw();
 		}
 		framesPerSecond->draw();
-		//textRenderer->draw();
 		glXSwapBuffers(dpy, win);
 
 		while(XPending(dpy))

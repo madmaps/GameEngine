@@ -23,7 +23,6 @@ class TextWidget : public Widgets
         
         void setText(std::string inText);
         
-        void setTextSize(const glm::vec2 inTextSize);
         void setTextColor(const glm::vec3 inTextColor);
         void setTextAlignment(const unsigned int inTextAlignment);
         
@@ -34,7 +33,6 @@ class TextWidget : public Widgets
         glm::vec2 topLeft;
         glm::vec2 bottomRight;
         glm::vec3 textColor;
-        glm::vec2 textSize;
         unsigned int textAlignment;
 	private:
 };

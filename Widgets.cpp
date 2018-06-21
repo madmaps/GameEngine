@@ -43,7 +43,8 @@ void Widgets::setLocation(const glm::vec2 inLocation)
 
 void Widgets::setSize(const glm::vec2 inSize)
 {
-    size = inSize;
+    size.x = inSize.x/(float)(*screenWidth);
+    size.y = inSize.y/(float)(*screenHeight);
 }
 
 bool Widgets::getActive()const
