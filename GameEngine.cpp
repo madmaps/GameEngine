@@ -145,12 +145,14 @@ int main(int argc, char **argv)
     
     TextWidget* framesPerSecond = new TextWidget();
     framesPerSecond->addRenderer(textRenderer);
-    framesPerSecond->setTextColor(glm::vec3(0.482352941f, 0.831372549f, 0.145098039f));
-    framesPerSecond->setTextAlignment(1);
+    framesPerSecond->setTextColor(glm::vec3(255.0f/255.0f, 162.0f/255.0f, 0.0f/255.0f));
+    framesPerSecond->setTextAlignment(2);
     framesPerSecond->setScreenDim(&screenDimensionX, &screenDimensionY);
-    framesPerSecond->setLocation(glm::vec2(screenDimensionX/2,screenDimensionY/2));
-    framesPerSecond->setSize(glm::vec2(24,24));
-    framesPerSecond->rotate(180.0f);
+    framesPerSecond->setLocation(glm::vec2(screenDimensionX,screenDimensionY-25));
+    framesPerSecond->setSize(glm::vec2(14,20));
+    framesPerSecond->rotate(0.0f);
+    framesPerSecond->setTextureSize(glm::vec2(2016.0f, 2016.0f));
+    framesPerSecond->setLetterBoxCount(glm::vec2(12.0f,8.0f));
     
     
     
@@ -236,7 +238,7 @@ int main(int argc, char **argv)
 
     	timeLapse = gameClock->getTimeLapse();
     	//std::cout << 1/timeLapse << std::endl;
-    	fps = std::to_string(1/timeLapse);
+    	fps = std::to_string((int)(1/timeLapse));
     	framesPerSecond->setText(fps);
     	
     	joystick->clearButtons();

@@ -55,15 +55,15 @@ void TextWidget::draw()
         {
             currentChar = 0;
         }
-        int textPositionX = currentChar % 12;
-        int textPositionY = 7 - floor((double)currentChar / 12);
+        int textPositionX = currentChar % (int)letterBoxCount.x;
+        int textPositionY = (letterBoxCount.y - 1) - floor((double)currentChar / letterBoxCount.x);
         
         translationMatrix[3][0] = xOffset + offset + (1.666 * size.x * i);
         translationMatrix[3][1] = yOffset;
         glm::mat4 rotationMatrix = glm::toMat4(rotation);
         modelMatrix = rotationMatrix * translationMatrix;
-        topLeft = glm::vec2(textPositionX * 0.0833333f, textPositionY *  0.125);
-        bottomRight = glm::vec2((textPositionX + 1) * 0.0833333f, (textPositionY + 1) * 0.125f);
+        topLeft = glm::vec2(textPositionX * (1 / letterBoxCount.x), textPositionY *  (1 / letterBoxCount.y));
+        bottomRight = glm::vec2((textPositionX + 1) * (1 / letterBoxCount.x), (textPositionY + 1) * (1 / letterBoxCount.y));
 
         renderer->draw();
     }
@@ -96,5 +96,15 @@ void TextWidget::setTextColor(const glm::vec3 inTextColor)
 void TextWidget::setTextAlignment(const unsigned int inTextAlignment)
 {
     textAlignment = inTextAlignment;
+}
+
+void TextWidget::setTextureSize(const glm::vec2 inTextureSize)
+{
+    textureSize = inTextureSize;
+}
+
+void TextWidget::setLetterBoxCount(const glm::vec2 inLetterBoxCount)
+{
+    letterBoxCount = inLetterBoxCount;
 }
 

@@ -33,7 +33,6 @@ TextGLRenderer::~TextGLRenderer()
 
 void TextGLRenderer::draw()
 {
-    glDepthMask(GL_FALSE);
     glUseProgram(shader);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
@@ -44,7 +43,6 @@ void TextGLRenderer::draw()
     glUniform3fv(uniformLocations[4], 1, color);
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-    glDepthMask(GL_TRUE);
 
 }
 
@@ -69,7 +67,6 @@ void TextGLRenderer::setTextTexture(const unsigned int inWidth, const unsigned i
     glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, inWidth, inHeight, 0, GL_BGR,GL_UNSIGNED_BYTE, inData);
-	//glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

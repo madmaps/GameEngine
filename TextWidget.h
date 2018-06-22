@@ -25,6 +25,8 @@ class TextWidget : public Widgets
         
         void setTextColor(const glm::vec3 inTextColor);
         void setTextAlignment(const unsigned int inTextAlignment);
+        void setTextureSize(const glm::vec2 inTextureSize);
+        void setLetterBoxCount(const glm::vec2 inLetterBoxCount);
         
 	protected:
         TextRenderer* renderer;
@@ -33,6 +35,8 @@ class TextWidget : public Widgets
         glm::vec2 topLeft;
         glm::vec2 bottomRight;
         glm::vec3 textColor;
+        glm::vec2 textureSize;
+        glm::vec2 letterBoxCount;
         unsigned int textAlignment;
 	private:
 };
